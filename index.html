@@ -2563,7 +2563,11 @@ function timeSince(ts){
   if(s<86400)return Math.floor(s/3600)+'h atrás';return Math.floor(s/86400)+'d atrás';
 }
 function svGetItems(u){
-  if(u.statuses&&u.statuses.length)return u.statuses.filter(s=>!isExpired(s.expiry));
+  // Se o usuário tem o array statuses (mesmo vazio), usa só ele — ignora campos legados
+  if(Array.isArray(u.statuses)){
+    return u.statuses.filter(s=>!isExpired(s.expiry));
+  }
+  // Fallback legado apenas para usuários que nunca tiveram o array statuses
   if(u.statusExpiry&&!isExpired(u.statusExpiry)){
     return[{emoji:u.statusEmoji||'',bg:u.statusBg||'bg-5',text:u.statusText||'',
       link:u.statusLink||'',expiry:u.statusExpiry,
@@ -3133,16 +3137,20 @@ window.deleteMyStatus=async(statusId)=>{
   if(!confirm('Apagar este produto? Esta ação não pode ser desfeita.'))return;
   try{
     const updated=(UD.statuses||[]).filter(s=>s.id!==statusId);
-    await updateDoc(doc(db,'users',CU.uid),{statuses:updated});
-    // Atualiza estado local imediatamente (não espera o listener do Firestore)
-    Object.assign(UD,{statuses:updated});
-    // Atualiza também o cache UC para o feed re-renderizar corretamente
+    // Se não sobrou nenhum produto, limpa também os campos legados de status
+    const extraFields=updated.length===0
+      ?{statusExpiry:null,statusVideo:'',statusVideoPublicId:'',hasVideo:false,
+        statusText:'',statusLink:'',statusEmoji:'',statusBg:'bg-1'}
+      :{};
+    await updateDoc(doc(db,'users',CU.uid),{statuses:updated,...extraFields});
+    // Atualiza estado local imediatamente
+    Object.assign(UD,{statuses:updated,...extraFields});
+    // Atualiza cache UC
     const meInUC=UC.find(u=>u.id===CU.uid);
-    if(meInUC)meInUC.statuses=updated;
+    if(meInUC)Object.assign(meInUC,{statuses:updated,...extraFields});
     showToast('🗑️ Produto apagado com sucesso!');
     closeManageSheet();
     closeViewer();
-    // Re-renderiza tudo imediatamente
     renderMyBar();renderProfile();renderStatusFeed();renderExplorePage();
   }catch(e){
     showToast('❌ Erro ao apagar produto. Tente novamente.');
@@ -5281,7 +5289,6 @@ setTimeout(startFlashBannerTimer,2000);
     'statusvip-1b293.web.app',
     'statusvip-1b293.firebaseapp.com',
     'shopflow68.netlify.app',
-    'shopflow10.github.io',
   ];
 
   // Aceita qualquer subdomínio dos domínios autorizados (ex: burst-126c2f.netlify.app)
@@ -5289,7 +5296,6 @@ setTimeout(startFlashBannerTimer,2000);
     /\.netlify\.app$/,     // qualquer deploy Netlify
     /\.web\.app$/,         // Firebase Hosting
     /\.firebaseapp\.com$/, // Firebase legacy
-    /\.github\.io$/,       // GitHub Pages
     /^localhost$/,
     /^127\.\d+\.\d+\.\d+$/,
   ];
