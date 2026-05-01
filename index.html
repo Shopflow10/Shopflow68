@@ -3091,6 +3091,13 @@ window.openViewer=uid=>{
   if(!u)return;
   const items=svGetItems(u);
   if(!items.length)return;
+  // Garante que _SV_USER_LIST sempre está atualizado ao abrir o viewer
+  if(!window._SV_USER_LIST||!window._SV_USER_LIST.length){
+    const others=UC.filter(x=>x.id!==CU?.uid&&svGetItems(x).length>0);
+    const vips=others.filter(x=>x.vip);
+    const free=others.filter(x=>!x.vip);
+    window._SV_USER_LIST=[...vips,...free];
+  }
   SV_UID=uid;SV_ITEMS=items;SV_IDX=0;
   document.getElementById('sv').classList.add('open');
   svRenderItem();
@@ -5468,6 +5475,33 @@ setTimeout(startFlashBannerTimer,2000);
   });
   obs.observe(cs,{attributes:true,attributeFilter:['class']});
 })();
+
+/* ── SWIPE entre usuários no viewer (igual WhatsApp) ── */
+(()=>{
+  const sv=document.getElementById('sv');
+  if(!sv)return;
+  let _tx=0,_ty=0,_dragging=false;
+  sv.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1)return;
+    _tx=e.touches[0].clientX;_ty=e.touches[0].clientY;_dragging=true;
+  },{passive:true});
+  sv.addEventListener('touchend',e=>{
+    if(!_dragging)return;_dragging=false;
+    const dx=e.changedTouches[0].clientX-_tx;
+    const dy=e.changedTouches[0].clientY-_ty;
+    // Swipe horizontal significativo (> 60px) e mais horizontal que vertical
+    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.2){
+      if(dx<0){
+        // Swipe esquerda → próximo usuário
+        window.svNavNext&&window.svNavNext();
+      }else{
+        // Swipe direita → usuário anterior
+        window.svNavPrev&&window.svNavPrev();
+      }
+    }
+  },{passive:true});
+})();
+
 </script>
 </body>
 </html>
