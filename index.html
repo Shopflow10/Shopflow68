@@ -183,53 +183,52 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 
 /* ─── TOPBAR ─── */
 .topbar{display:flex;align-items:center;padding:0 18px;height:60px;
-  background:rgba(5,5,13,0.96);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  background:rgba(5,5,13,0.97);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
   border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;position:relative;z-index:50;
-  box-shadow:0 1px 0 rgba(124,58,237,0.2),0 4px 24px rgba(0,0,0,0.4)}
-.tb-logo{font-family:'Plus Jakarta Sans',sans-serif;font-size:21px;font-weight:800;letter-spacing:-0.5px;
-  color:#ffffff;flex:1;
-  text-shadow:0 0 12px rgba(124,58,237,0.6)}
+  box-shadow:0 1px 0 rgba(124,58,237,0.3),0 4px 30px rgba(0,0,0,0.5)}
+.tb-logo{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.5px;
+  flex:1}
 .tb-actions{display:flex;align-items:center;gap:8px}
 .tb-vip{display:none;align-items:center;gap:5px;
   background:linear-gradient(135deg,rgba(124,58,237,0.18),rgba(240,40,124,0.12));
   border:1px solid rgba(167,139,250,0.5);border-radius:50px;padding:5px 12px;
   font-size:11px;font-weight:800;color:var(--accent2);letter-spacing:.3px}
-.tb-btn{width:38px;height:38px;border-radius:50%;background:rgba(26,26,46,0.9);
-  border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;
-  font-size:17px;cursor:pointer;transition:all .2s;
-  box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.tb-btn{width:40px;height:40px;border-radius:14px;background:rgba(26,26,46,0.9);
+  border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;
+  font-size:18px;cursor:pointer;transition:all .2s;
+  box-shadow:0 2px 10px rgba(0,0,0,0.3)}
 .tb-btn:active{background:var(--card3);transform:scale(.92)}
 
 /* ─── BOTTOM NAV ─── */
 /* ── Bottom nav oculto durante loading (igual WhatsApp) ── */
-.bottom-nav{display:flex;background:var(--nav-bg);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
-  border-top:1px solid rgba(255,255,255,0.07);position:fixed;bottom:0;left:0;right:0;z-index:50;
+.bottom-nav{display:flex;background:rgba(7,7,18,0.99);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);
+  border-top:1px solid rgba(124,58,237,0.15);position:fixed;bottom:0;left:0;right:0;z-index:50;
   padding-bottom:env(safe-area-inset-bottom,0px);height:calc(65px + env(safe-area-inset-bottom,0px));
-  box-shadow:0 -1px 0 rgba(124,58,237,0.2),0 -8px 40px rgba(0,0,0,0.5);
+  box-shadow:0 -1px 0 rgba(255,255,255,0.05),0 -12px 50px rgba(0,0,0,0.6);
   opacity:0;pointer-events:none;transition:opacity .35s ease .2s}
 .bottom-nav.visible{opacity:1;pointer-events:all}
 #appScreen.active .bottom-nav{opacity:1;pointer-events:all}
 .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:8px 4px;cursor:pointer;position:relative;gap:3px;transition:all .2s}
-.nav-icon{font-size:22px;transition:transform .25s,filter .25s}
+  padding:8px 4px;cursor:pointer;position:relative;gap:4px;transition:all .2s}
+.nav-icon{font-size:22px;transition:transform .3s cubic-bezier(.34,1.56,.64,1),filter .25s}
 .nav-lbl{font-size:10px;color:var(--muted);font-weight:600;transition:color .2s;letter-spacing:.2px}
 .nav-item.active .nav-lbl{
   background:var(--grad-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
   font-weight:800}
-.nav-item.active .nav-icon{transform:scale(1.18);filter:drop-shadow(0 0 8px rgba(124,58,237,0.8))}
-.nav-item.active::before{content:'';position:absolute;top:0;left:25%;right:25%;height:2px;
-  background:var(--grad-main);border-radius:0 0 3px 3px;
-  box-shadow:0 0 12px rgba(124,58,237,0.8)}
+.nav-item.active .nav-icon{transform:scale(1.2) translateY(-2px);filter:drop-shadow(0 0 8px rgba(124,58,237,0.9))}
+.nav-item.active::before{content:'';position:absolute;top:0;left:20%;right:20%;height:2.5px;
+  background:var(--grad-main);border-radius:0 0 4px 4px;
+  box-shadow:0 0 14px rgba(124,58,237,0.9)}
 /* FAB central */
 .nav-fab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:4px 4px 8px;cursor:pointer;position:relative}
-.nav-fab-btn{width:54px;height:54px;border-radius:50%;margin-top:-24px;
+.nav-fab-btn{width:56px;height:56px;border-radius:18px;margin-top:-26px;
   background:var(--grad-main);
-  display:flex;align-items:center;justify-content:center;font-size:24px;
-  box-shadow:0 6px 28px rgba(124,58,237,0.7),0 0 0 4px rgba(5,5,13,0.9),0 0 0 5px rgba(124,58,237,0.3);
-  transition:transform .2s,box-shadow .2s;border:none;cursor:pointer}
-.nav-fab-btn:active{transform:scale(.88);box-shadow:0 3px 14px rgba(124,58,237,0.5),0 0 0 4px rgba(5,5,13,0.9)}
-.nav-fab-lbl{font-size:10px;color:var(--muted2);font-weight:600;margin-top:5px;letter-spacing:.2px}
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  box-shadow:0 6px 30px rgba(124,58,237,0.75),0 0 0 4px rgba(5,5,13,0.9),0 0 0 5.5px rgba(124,58,237,0.35);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;border:none;cursor:pointer}
+.nav-fab-btn:active{transform:scale(.86);box-shadow:0 3px 14px rgba(124,58,237,0.5),0 0 0 4px rgba(5,5,13,0.9)}
+.nav-fab-lbl{font-size:10px;color:var(--muted2);font-weight:600;margin-top:6px;letter-spacing:.2px}
 .nav-dot{position:absolute;top:5px;right:calc(50% - 17px);width:8px;height:8px;
   background:var(--red);border-radius:50%;border:2px solid var(--dark);display:none}
 .nav-dot.show{display:block}
@@ -596,6 +595,147 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 .vab-cd-l{font-size:9px;color:rgba(255,215,0,.6);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 .vab-cd-sep{font-family:'Syne',sans-serif;font-size:26px;font-weight:900;color:rgba(245,200,66,.5);align-self:flex-start;padding-top:8px}
 
+/* ═══ TOPBAR: badge de notificação ═══ */
+.tb-notif-btn{position:relative}
+.tb-notif-badge{position:absolute;top:-2px;right:-2px;min-width:17px;height:17px;
+  background:var(--red);color:#fff;font-size:9px;font-weight:900;
+  border-radius:50px;padding:0 4px;border:2px solid var(--dark);
+  display:flex;align-items:center;justify-content:center;
+  animation:notifPop .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes notifPop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* ═══ CENTRO DE NOTIFICAÇÕES ═══ */
+.notif-center-ov{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);backdrop-filter:blur(4px)}
+.notif-center-ov.open{display:block}
+.notif-center{display:none;position:fixed;top:0;right:0;bottom:0;width:min(360px,100vw);
+  z-index:10000;background:var(--card);flex-direction:column;
+  box-shadow:-8px 0 40px rgba(0,0,0,.7);animation:slideFromRight .3s cubic-bezier(.22,1,.36,1)}
+.notif-center.open{display:flex}
+@keyframes slideFromRight{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.nc-header{display:flex;align-items:center;padding:16px 16px 12px;
+  border-bottom:1px solid var(--border);flex-shrink:0;gap:10px}
+.nc-title{font-size:17px;font-weight:800;flex:1}
+.nc-clear{font-size:12px;color:var(--accent2);font-weight:700;cursor:pointer;padding:4px 10px;
+  background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.25);border-radius:50px;
+  transition:all .15s}
+.nc-clear:active{opacity:.7}
+.nc-close{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.07);
+  border:none;color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.nc-list{flex:1;overflow-y:auto;padding:8px 0 24px}
+.nc-empty{text-align:center;padding:48px 20px;color:var(--muted)}
+.nc-empty-icon{font-size:48px;margin-bottom:12px}
+.nc-empty-t{font-size:14px;font-weight:600;margin-bottom:4px}
+.nc-empty-s{font-size:12px;color:var(--muted)}
+.nc-item{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;
+  cursor:pointer;transition:background .15s;border-bottom:1px solid rgba(255,255,255,.04)}
+.nc-item:active{background:rgba(255,255,255,.04)}
+.nc-item.unread{background:rgba(124,58,237,.06)}
+.nc-item.unread::before{content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--accent2);flex-shrink:0;margin-top:6px;align-self:flex-start}
+.nc-item-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:18px;font-weight:900;color:#fff;overflow:hidden;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(240,40,124,.2))}
+.nc-item-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.nc-item-body{flex:1;min-width:0}
+.nc-item-t{font-size:13px;font-weight:700;color:var(--text);line-height:1.4}
+.nc-item-s{font-size:12px;color:var(--muted2);margin-top:2px;line-height:1.4}
+.nc-item-time{font-size:10px;color:var(--muted);margin-top:4px}
+.nc-icon-wrap{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:20px;flex-shrink:0}
+.nc-icon-wrap.purple{background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.25)}
+.nc-icon-wrap.gold{background:rgba(255,184,0,.12);border:1px solid rgba(255,184,0,.25)}
+.nc-icon-wrap.green{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25)}
+.nc-icon-wrap.pink{background:rgba(240,40,124,.12);border:1px solid rgba(240,40,124,.25)}
+
+/* Toast de notificação in-app (banner topo) */
+.notif-toast{position:fixed;top:-90px;left:12px;right:12px;z-index:10001;
+  background:rgba(15,15,30,.97);backdrop-filter:blur(20px);
+  border:1px solid rgba(124,58,237,.35);border-radius:18px;
+  padding:13px 15px;display:flex;align-items:center;gap:12px;
+  box-shadow:0 8px 40px rgba(0,0,0,.7);transition:top .35s cubic-bezier(.22,1,.36,1)}
+.notif-toast.show{top:12px}
+.nt-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:18px;font-weight:900;color:#fff;
+  background:var(--grad-main);flex-shrink:0;overflow:hidden}
+.nt-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.nt-body{flex:1;min-width:0}
+.nt-app{font-size:10px;color:var(--accent2);font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;margin-bottom:2px}
+.nt-title{font-size:13px;font-weight:800;color:var(--text)}
+.nt-text{font-size:12px;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ═══ SISTEMA DE COMENTÁRIOS ═══ */
+/* Botão comentar na barra de ações do viewer */
+.sv-comment-btn{display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,.1);backdrop-filter:blur(12px);
+  border:1.5px solid rgba(255,255,255,.2);border-radius:50px;
+  padding:10px 16px;color:#fff;font-size:15px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;cursor:pointer;
+  transition:all .2s;flex-shrink:0}
+.sv-comment-btn:active{transform:scale(.93)}
+
+/* Overlay de comentários */
+.sv-comments-ov{display:none;position:fixed;inset:0;z-index:9991;background:rgba(0,0,0,.5);backdrop-filter:blur(3px)}
+.sv-comments-ov.open{display:block}
+
+/* Painel de comentários */
+.sv-comments-panel{display:none;position:fixed;bottom:0;left:0;right:0;z-index:9992;
+  background:var(--card);border-radius:22px 22px 0 0;max-height:82vh;
+  flex-direction:column;box-shadow:0 -8px 40px rgba(0,0,0,.85);animation:slideUp .3s cubic-bezier(.22,1,.36,1)}
+.sv-comments-panel.open{display:flex}
+.sv-cp-handle{width:38px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 0;flex-shrink:0}
+.sv-cp-header{display:flex;align-items:center;padding:12px 16px 10px;
+  border-bottom:1px solid var(--border);flex-shrink:0;gap:8px}
+.sv-cp-title{font-size:15px;font-weight:800;flex:1}
+.sv-cp-count{font-size:12px;color:var(--muted2);font-weight:600;
+  background:var(--card2);border:1px solid var(--border);border-radius:50px;padding:3px 10px}
+.sv-cp-close{background:none;border:none;color:var(--muted2);font-size:20px;cursor:pointer;padding:6px}
+/* Lista de comentários */
+.sv-cp-list{flex:1;overflow-y:auto;padding:8px 16px 12px;display:flex;flex-direction:column;gap:12px}
+.sv-cp-empty{text-align:center;padding:36px 20px;color:var(--muted);font-size:13px}
+.sv-cp-empty-icon{font-size:40px;margin-bottom:8px}
+/* Item de comentário */
+.sv-cmt{display:flex;gap:10px;align-items:flex-start}
+.sv-cmt-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:900;color:#fff;overflow:hidden;flex-shrink:0}
+.sv-cmt-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.sv-cmt-bubble{flex:1;background:var(--card2);border:1px solid var(--border);
+  border-radius:16px;border-top-left-radius:5px;padding:10px 13px}
+.sv-cmt-name{font-size:12px;font-weight:700;color:var(--accent2);margin-bottom:4px;
+  display:flex;align-items:center;gap:5px}
+.sv-cmt-name .cmt-vip{font-size:9px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;padding:1px 6px;border-radius:50px;font-weight:900}
+.sv-cmt-text{font-size:13px;color:var(--text);line-height:1.5;word-break:break-word}
+.sv-cmt-meta{display:flex;align-items:center;gap:8px;margin-top:6px}
+.sv-cmt-time{font-size:10px;color:var(--muted)}
+.sv-cmt-like{font-size:11px;color:var(--muted2);cursor:pointer;display:flex;align-items:center;gap:3px;
+  background:none;border:none;padding:0;font-family:'Plus Jakarta Sans',sans-serif;transition:color .15s}
+.sv-cmt-like.liked{color:var(--red)}
+.sv-cmt-del{font-size:11px;color:var(--red);cursor:pointer;margin-left:auto;
+  background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif}
+/* Input de novo comentário */
+.sv-cp-input-wrap{display:flex;align-items:flex-end;gap:8px;padding:10px 14px;
+  border-top:1px solid var(--border);background:var(--card);flex-shrink:0;
+  padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+.sv-cp-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:13px;font-weight:900;color:#fff;overflow:hidden;flex-shrink:0}
+.sv-cp-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.sv-cp-pill{flex:1;display:flex;align-items:flex-end;
+  background:var(--card2);border:1.5px solid var(--border2);border-radius:22px;
+  padding:8px 12px;min-height:42px;gap:8px;transition:border-color .2s}
+.sv-cp-pill:focus-within{border-color:var(--accent2)}
+.sv-cp-pill textarea{flex:1;background:transparent;border:none;outline:none;
+  color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;
+  resize:none;max-height:90px;overflow-y:auto;min-height:24px;line-height:1.5;
+  align-self:center}
+.sv-cp-pill textarea::placeholder{color:var(--muted)}
+.sv-cp-send{width:36px;height:36px;border-radius:50%;border:none;
+  background:var(--grad-main);color:#fff;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:transform .15s,opacity .15s;opacity:.5}
+.sv-cp-send.ready{opacity:1}
+.sv-cp-send:active{transform:scale(.88)}
+
 /* ═══ STATUS VIEWER ═══ */
 .sv{display:none;position:fixed;inset:0;z-index:300;flex-direction:column;background:#000}
 .sv.open{display:flex}
@@ -613,6 +753,15 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 .sv-x{font-size:22px;color:#fff;background:none;border:none;padding:8px;cursor:pointer;flex-shrink:0}
 .sv-tap-l,.sv-tap-r{position:absolute;top:0;bottom:120px;width:36%;z-index:3;cursor:pointer}
 .sv-tap-l{left:0}.sv-tap-r{right:0}
+/* Indicador de pausado */
+.sv-paused-indicator{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:10;pointer-events:none;opacity:0;transition:opacity .15s;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(8px);border-radius:50%;
+  width:64px;height:64px;display:flex;align-items:center;justify-content:center;
+  font-size:28px;border:2px solid rgba(255,255,255,.25)}
+.sv.paused .sv-paused-indicator{opacity:1}
+/* Congela a barra de progresso quando pausado */
+.sv.paused .sv-fill{animation-play-state:paused!important;transition:none!important}
 .sv-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;-webkit-transform:translateZ(0)}
 .sv-body{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:80px 22px 150px;position:relative;z-index:2}
 .sv-em{font-size:72px}
@@ -645,6 +794,103 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 .sv-info-name{flex:1;font-size:14px;font-weight:600}
 .sv-info-meta{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px}
 .sv-info-empty{text-align:center;padding:36px 20px;color:var(--muted);font-size:13px}
+
+/* ═══ SISTEMA DE REAÇÕES ═══ */
+/* Barra de ações do viewer */
+.sv-actions{position:fixed;bottom:0;left:0;right:0;z-index:9998;
+  background:linear-gradient(to top,rgba(0,0,0,.96) 0%,rgba(0,0,0,.7) 65%,transparent 100%);
+  padding:12px 14px 28px;display:flex;align-items:center;gap:8px}
+/* Botão de reação */
+.sv-react-btn{position:relative;display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,.1);backdrop-filter:blur(12px);
+  border:1.5px solid rgba(255,255,255,.2);border-radius:50px;
+  padding:10px 16px;color:#fff;font-size:15px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;cursor:pointer;
+  transition:all .2s;flex-shrink:0}
+.sv-react-btn:active{transform:scale(.93)}
+.sv-react-btn.reacted{border-color:rgba(255,184,0,.8);background:rgba(255,184,0,.2)}
+/* Botão de views */
+.sv-views-btn{display:flex;align-items:center;gap:8px;flex:1;
+  background:rgba(255,255,255,.08);backdrop-filter:blur(10px);
+  border:1.5px solid rgba(255,255,255,.15);border-radius:50px;
+  padding:10px 16px;color:rgba(255,255,255,.85);font-size:13px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;cursor:pointer;
+  transition:all .2s;justify-content:center}
+.sv-views-btn:active{opacity:.7}
+/* Picker de reações */
+.sv-reaction-picker{display:none;position:fixed;bottom:82px;left:14px;right:14px;z-index:9999;
+  background:rgba(20,20,35,.97);backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,.12);border-radius:20px;
+  padding:12px 10px 10px;
+  box-shadow:0 -4px 40px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06)}
+.sv-reaction-picker.open{display:block;animation:reactionPickerIn .25s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes reactionPickerIn{from{opacity:0;transform:translateY(16px) scale(.92)}to{opacity:1;transform:none}}
+.sv-rp-title{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);
+  text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;padding:0 4px}
+.sv-rp-grid{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.sv-rp-emoji{width:46px;height:46px;display:flex;align-items:center;justify-content:center;
+  font-size:24px;border-radius:14px;cursor:pointer;background:rgba(255,255,255,.05);
+  border:1.5px solid transparent;transition:all .15s;position:relative}
+.sv-rp-emoji:active{transform:scale(.88)}
+.sv-rp-emoji.selected{background:rgba(255,184,0,.18);border-color:rgba(255,184,0,.6);
+  transform:scale(1.1)}
+.sv-rp-emoji:hover{background:rgba(255,255,255,.1)}
+.sv-rp-emoji .rp-count{position:absolute;bottom:-2px;right:-2px;
+  background:var(--accent);color:#fff;font-size:8px;font-weight:800;
+  border-radius:50px;padding:0 4px;min-width:14px;height:14px;
+  display:flex;align-items:center;justify-content:center;
+  border:1.5px solid rgba(20,20,35,1)}
+/* Linha de reações rápidas sob o status */
+.sv-reactions-row{position:fixed;bottom:74px;left:0;right:0;z-index:9997;
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  pointer-events:none;opacity:0;transition:opacity .3s}
+.sv-reactions-row.show{opacity:1;pointer-events:all}
+.sv-reaction-chip{display:flex;align-items:center;gap:4px;
+  background:rgba(255,255,255,.12);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.18);border-radius:50px;
+  padding:5px 10px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;
+  transition:all .15s}
+.sv-reaction-chip.mine{background:rgba(255,184,0,.22);border-color:rgba(255,184,0,.5);color:var(--gold)}
+.sv-reaction-chip:active{transform:scale(.92)}
+/* Painel quem viu / reações */
+.sv-info-ov{display:none;position:fixed;inset:0;z-index:390;background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
+.sv-info-ov.open{display:block}
+.sv-info-panel{display:none;position:fixed;bottom:0;left:0;right:0;z-index:400;
+  background:var(--card);border-radius:22px 22px 0 0;max-height:76vh;
+  flex-direction:column;box-shadow:0 -8px 40px rgba(0,0,0,.8);animation:slideUp .3s ease}
+.sv-info-panel.open{display:flex}
+.sv-info-handle{width:38px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 0;flex-shrink:0}
+.sv-info-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;position:relative;gap:0}
+.sv-info-tab{flex:1;padding:13px 8px;text-align:center;font-size:13px;font-weight:700;
+  color:var(--muted2);cursor:pointer;transition:color .2s;position:relative}
+.sv-info-tab.active{color:var(--text)}
+.sv-info-tab.active::after{content:'';position:absolute;bottom:0;left:20%;right:20%;
+  height:2px;background:var(--grad-main);border-radius:2px}
+.sv-info-close{position:absolute;top:10px;right:14px;font-size:20px;color:var(--muted2);
+  background:none;border:none;cursor:pointer;padding:6px}
+.sv-info-list{flex:1;overflow-y:auto;padding:4px 0 24px}
+.sv-info-row{display:flex;align-items:center;gap:12px;padding:11px 16px}
+.sv-info-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:16px;font-weight:900;color:#fff;overflow:hidden;flex-shrink:0}
+.sv-info-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.sv-info-name{flex:1;font-size:14px;font-weight:600}
+.sv-info-meta{font-size:18px;color:var(--muted)}
+.sv-info-time{font-size:10px;color:var(--muted);margin-top:1px}
+/* Animação flutuante de emoji ao reagir */
+@keyframes emojiFloat{
+  0%{opacity:1;transform:translateY(0) scale(1)}
+  60%{opacity:1;transform:translateY(-60px) scale(1.3)}
+  100%{opacity:0;transform:translateY(-120px) scale(.7)}
+}
+.emoji-fly{position:fixed;z-index:9999;pointer-events:none;font-size:32px;
+  animation:emojiFloat .9s ease-out forwards}
+/* Seção de resumo de reações no painel */
+.sv-reactions-summary{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px 4px;border-bottom:1px solid var(--border)}
+.sv-rs-chip{display:flex;align-items:center;gap:5px;
+  background:var(--card2);border:1px solid var(--border2);border-radius:50px;
+  padding:6px 12px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;transition:all .15s}
+.sv-rs-chip.active{background:rgba(255,184,0,.15);border-color:rgba(255,184,0,.5);color:var(--gold)}
+.sv-rs-chip:active{transform:scale(.93)}
 
 
 /* ═══ CHAT SCREEN ═══ */
@@ -1610,9 +1856,13 @@ window._hardLoadingTimeout=setTimeout(function(){
 <div id="appScreen" class="screen">
   <!-- Topbar -->
   <div class="topbar">
-    <div class="tb-logo">🛍️ ShopFlow</div>
+    <div class="tb-logo">🛍️ <span style="background:var(--grad-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">ShopFlow</span></div>
     <div class="tb-actions">
       <div class="tb-btn" id="adminBtn" style="display:none" onclick="openAdmin()" title="Admin">⚙️</div>
+      <div class="tb-btn tb-notif-btn" id="notifBellBtn" onclick="openNotificationCenter()" title="Notificações" style="position:relative">
+        🔔
+        <div class="tb-notif-badge" id="notifBadge" style="display:none"></div>
+      </div>
     </div>
   </div>
 
@@ -1794,6 +2044,8 @@ window._hardLoadingTimeout=setTimeout(function(){
 <div class="sv" id="sv">
   <div class="sv-prog" id="svProg"></div>
   <div class="sv-idx-badge" id="svIdxBadge"></div>
+  <!-- Indicador de pausa (hold to pause like WhatsApp) -->
+  <div class="sv-paused-indicator" id="svPausedIndicator">⏸</div>
   <div class="sv-top">
     <div class="sv-user">
       <div class="sv-av" id="svAv"></div>
@@ -1804,8 +2056,8 @@ window._hardLoadingTimeout=setTimeout(function(){
     </div>
     <button class="sv-x" onclick="closeViewer()">✕</button>
   </div>
-  <div class="sv-tap-l" onclick="svNavPrev()"></div>
-  <div class="sv-tap-r" onclick="svNavNext()"></div>
+  <div class="sv-tap-l" id="svTapL"></div>
+  <div class="sv-tap-r" id="svTapR"></div>
   <video class="sv-video" id="svVideo" playsinline style="display:none" preload="metadata"></video>
   <div class="sv-body" id="svBody">
     <div class="sv-em" id="svEm"></div>
@@ -1826,9 +2078,111 @@ window._hardLoadingTimeout=setTimeout(function(){
   </div>
   <!-- Botão apagar meu status -->
   <button class="sv-delete-btn" id="svDeleteBtn" onclick="openManageSheet()">🗑️ Apagar produto</button>
+
+  <!-- Linha de reações rápidas (chips) -->
+  <div class="sv-reactions-row" id="svReactionsRow"></div>
+
+  <!-- Barra de ações inferior -->
+  <div class="sv-actions" id="svActions" style="display:none">
+    <button class="sv-react-btn" id="svReactBtn" onclick="toggleReactionPicker()">
+      <span id="svMyReaction">😊</span>
+      <span id="svReactionCount" style="font-size:13px">Reagir</span>
+    </button>
+    <button class="sv-comment-btn" id="svCommentBtn" onclick="openCommentsPanel()">
+      💬 <span id="svCommentCount" style="font-size:13px">0</span>
+    </button>
+    <button class="sv-views-btn" id="svViewsBtn" onclick="openInfoPanel(&#39;views&#39;)">
+      <span>👁</span>
+      <span id="svViewsCount">0 visualizações</span>
+    </button>
+  </div>
+
+  <!-- Picker de reações -->
+  <div class="sv-reaction-picker" id="svReactionPicker">
+    <div class="sv-rp-title">Como você achou?</div>
+    <div class="sv-rp-grid" id="svRpGrid"></div>
+  </div>
+
+  <!-- Overlay do painel de info -->
+  <div class="sv-info-ov" id="svInfoOv" onclick="closeInfoPanel()"></div>
+
+  <!-- Painel quem viu / reagiu -->
+  <div class="sv-info-panel" id="svInfoPanel">
+    <div class="sv-info-handle"></div>
+    <div class="sv-info-tabs">
+      <div class="sv-info-tab active" id="svTabViews" onclick="switchInfoTab(&#39;views&#39;)">
+        👁 Viram <span id="svTabViewsN"></span>
+      </div>
+      <div class="sv-info-tab" id="svTabReactions" onclick="switchInfoTab(&#39;reactions&#39;)">
+        ✨ Reações <span id="svTabReactionsN"></span>
+      </div>
+      <button class="sv-info-close" onclick="closeInfoPanel()">✕</button>
+    </div>
+    <div class="sv-reactions-summary" id="svReactionsSummary" style="display:none"></div>
+    <div class="sv-info-list" id="svInfoList"></div>
+  </div>
 </div>
 
-<!-- EDITOR MODAL — redesenhado v2 -->
+<!-- STATUS VIEWER END -->
+
+<!-- ══════════════════════════════
+     PAINEL DE COMENTÁRIOS
+     ══════════════════════════════ -->
+<div class="sv-comments-ov" id="svCommentsOv" onclick="closeCommentsPanel()"></div>
+<div class="sv-comments-panel" id="svCommentsPanel">
+  <div class="sv-cp-handle"></div>
+  <div class="sv-cp-header">
+    <div class="sv-cp-title">💬 Comentários</div>
+    <div class="sv-cp-count" id="svCpCount">0</div>
+    <button class="sv-cp-close" onclick="closeCommentsPanel()">✕</button>
+  </div>
+  <div class="sv-cp-list" id="svCpList">
+    <div class="sv-cp-empty">
+      <div class="sv-cp-empty-icon">💬</div>
+      <div>Nenhum comentário ainda</div>
+      <div style="font-size:12px;margin-top:4px;color:var(--muted)">Seja o primeiro a comentar!</div>
+    </div>
+  </div>
+  <div class="sv-cp-input-wrap">
+    <div class="sv-cp-av" id="svCpMyAv"></div>
+    <div class="sv-cp-pill">
+      <textarea id="svCpInput" placeholder="Adicionar comentário..." rows="1"
+        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';svCpCheckSend()"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitComment()}"
+      ></textarea>
+    </div>
+    <button class="sv-cp-send" id="svCpSendBtn" onclick="submitComment()" disabled>➤</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     CENTRO DE NOTIFICAÇÕES
+     ══════════════════════════════ -->
+<div class="notif-center-ov" id="notifCenterOv" onclick="closeNotificationCenter()"></div>
+<div class="notif-center" id="notifCenter">
+  <div class="nc-header">
+    <div class="nc-title">🔔 Notificações</div>
+    <div class="nc-clear" onclick="clearAllNotifications()">Limpar tudo</div>
+    <button class="nc-close" onclick="closeNotificationCenter()">✕</button>
+  </div>
+  <div class="nc-list" id="ncList">
+    <div class="nc-empty">
+      <div class="nc-empty-icon">🔕</div>
+      <div class="nc-empty-t">Nenhuma notificação</div>
+      <div class="nc-empty-s">Quando alguém comentar ou reagir ao seu produto, você verá aqui</div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast de notificação in-app -->
+<div class="notif-toast" id="notifToast" onclick="handleNotifToastClick()">
+  <div class="nt-av" id="ntAv"></div>
+  <div class="nt-body">
+    <div class="nt-app">ShopFlow</div>
+    <div class="nt-title" id="ntTitle"></div>
+    <div class="nt-text" id="ntText"></div>
+  </div>
+</div>
 <div class="modal-ov" id="editorModal">
   <div class="modal-sh" style="padding:0;overflow:hidden;border-radius:28px 28px 0 0;display:flex;flex-direction:column;max-height:90vh">
 
@@ -2631,6 +2985,7 @@ onAuthStateChanged(auth,async user=>{
       window.addEventListener('beforeunload',()=>updateDoc(doc(db,'users',CU.uid),{online:false,lastSeen:Date.now()}).catch(()=>{}));
       showScreen('app');
       startListener();
+      startNotificationsListener();
       renderApp();
       // Apaga vídeos expirados do Cloudinary automaticamente
       if(UD.statuses&&UD.statuses.length){
@@ -2989,9 +3344,13 @@ function svRenderItem(){
   const av=document.getElementById('svAv');
   if(u.photoURL){av.className='sv-av';av.innerHTML=`<img src="${u.photoURL}" alt="">`;}
   else{av.className='sv-av '+(u.avClass||'av-1');av.textContent=(u.name||'?')[0].toUpperCase();}
-  // Mostrar/ocultar barra de ações (removido — sem curtidas/views nesta versão)
-  // Views counter — removido
-  // Like button — removido
+  // Inicializa barra de ações (reações + quem viu)
+  _reactionPickerOpen=false;
+  const picker=document.getElementById("svReactionPicker");
+  if(picker)picker.classList.remove("open");
+  setTimeout(()=>initViewerActions(),100);
+  // Carrega contador de comentários
+  _loadCommentCount(SV_UID, item.id);
   // Categoria
   const catBadge=document.getElementById('svCategoryBadge');
   if(catBadge){
@@ -3085,6 +3444,31 @@ function svRenderItem(){
   // Botão apagar — só aparece para o dono do status
   const delBtn=document.getElementById('svDeleteBtn');
   if(delBtn){delBtn.classList.toggle('show',SV_UID===CU?.uid);}
+  // Botão "Quem viu" para o dono — mostra barra de ações com views
+  const actBar=document.getElementById('svActions');
+  if(actBar&&SV_UID===CU?.uid){
+    // Dono: mostra barra com views + reações
+    actBar.style.display='flex';
+    const reactBtn=document.getElementById('svReactBtn');
+    if(reactBtn)reactBtn.style.display='none';
+    const viewsBtn=document.getElementById('svViewsBtn');
+    if(viewsBtn){viewsBtn.style.flex='1';viewsBtn.style.justifyContent='center';}
+    // Atualiza contadores dinamicamente
+    const viewsCount=document.getElementById('svViewsCount');
+    if(viewsCount){
+      Promise.all([
+        getDocs(collection(db,'views',SV_UID,'viewers')),
+        SV_ITEMS[SV_IDX]?getDocs(collection(db,'reactions',SV_UID+'_'+SV_ITEMS[SV_IDX].id,'reactors')):Promise.resolve({size:0})
+      ]).then(([vs,rs])=>{
+        if(viewsCount)viewsCount.textContent=vs.size+' views · '+rs.size+' reações';
+      }).catch(()=>{});
+    }
+  }else if(actBar){
+    const reactBtn=document.getElementById('svReactBtn');
+    if(reactBtn)reactBtn.style.display='';
+    const viewsBtn=document.getElementById('svViewsBtn');
+    if(viewsBtn){viewsBtn.style.flex='';viewsBtn.style.justifyContent='';}
+  }
   // Progress bars
   const progEl=document.getElementById('svProg');  progEl.innerHTML=SV_ITEMS.map((_,i)=>`<div class="sv-bar"><div class="sv-fill" id="svFill${i}" style="width:${i<SV_IDX?'100%':'0%'}"></div></div>`).join('');
   const fill=document.getElementById('svFill'+SV_IDX);
@@ -3172,6 +3556,16 @@ window.svNavPrev=()=>{
     SV_IDX=0;svRenderItem();
   }
 };
+async function _loadCommentCount(ownerId, statusId) {
+  if (!ownerId || !statusId) return;
+  try {
+    const cmtKey = `${ownerId}_${statusId}`;
+    const snap = await getDocs(collection(db, 'comments', cmtKey, 'msgs'));
+    const countEl = document.getElementById('svCommentCount');
+    if (countEl) countEl.textContent = snap.size;
+  } catch (e) {}
+}
+
 window.closeViewer=()=>{
   clearTimeout(VT);SV_UID=null;SV_ITEMS=[];SV_IDX=0;
   const v=document.getElementById('svVideo');v.pause();v.src='';v.load();v.style.display='none';
@@ -3180,6 +3574,17 @@ window.closeViewer=()=>{
   // Oculta botão apagar ao fechar
   const delBtn=document.getElementById('svDeleteBtn');
   if(delBtn)delBtn.classList.remove('show');
+  // Reseta UI de reações
+  _currentReactions={};_myReaction=null;_reactionPickerOpen=false;_reactionFilter=null;
+  const picker=document.getElementById('svReactionPicker');
+  if(picker)picker.classList.remove('open');
+  const actBar=document.getElementById('svActions');
+  if(actBar)actBar.style.display='none';
+  const row=document.getElementById('svReactionsRow');
+  if(row){row.classList.remove('show');row.innerHTML='';}
+  closeInfoPanel();
+  // Fecha painel de comentários se estiver aberto
+  closeCommentsPanel();
 };
 
 /* ── GERENCIAR / APAGAR STATUS ── */
@@ -3251,76 +3656,200 @@ async function countView(u){
   }catch(e){}
 }
 
-/* ── LIKES ── */
-function likeKey(statusId,ownerId){return`${ownerId}_${statusId}`;}
+/* ══════════════════════════════════════════
+   SISTEMA DE REAÇÕES + QUEM VIU
+   ══════════════════════════════════════════ */
 
-async function updateLikeUI(statusId,ownerId){
-  if(!CU)return;
-  const key=likeKey(statusId,ownerId);
-  let likes=0;let liked=false;
-  try{
-    const snap=await getDoc(doc(db,'likes',key));
-    if(snap.exists()){
-      const d=snap.data();
-      likes=d.count||0;
-      liked=!!(d.users&&d.users[CU.uid]===true);
-    }
-  }catch(e){}
-  const likeIcon=document.getElementById('svLikeIcon');
-  const likeCount=document.getElementById('svLikeCount');
-  const likeBtn=document.getElementById('svLikeBtn');
-  if(likeIcon)likeIcon.textContent=liked?'❤️':'🤍';
-  if(likeCount)likeCount.textContent=fmt(likes);
-  if(likeBtn){likeBtn._liked=liked;likeBtn._key=key;likeBtn._count=likes;likeBtn._statusId=statusId;likeBtn._ownerId=ownerId;likeBtn.classList.toggle('liked',liked);}
+// Emojis disponíveis para reação
+const REACTION_EMOJIS=['🔥','❤️','😍','👏','💰','🤩','😮','👍'];
+// Estado local de reações para o status atual
+let _currentReactions={}; // {emoji: count}
+let _myReaction=null;     // emoji que o usuário atual usou
+let _reactionPickerOpen=false;
+
+/* ── Inicializa/atualiza a barra de ações no viewer ── */
+async function initViewerActions(){
+  const isOwner=SV_UID===CU?.uid;
+  const actBar=document.getElementById('svActions');
+  if(!actBar)return;
+
+  // Só mostra a barra se não for o dono (dono já vê o painel de gerenciar)
+  actBar.style.display=isOwner?'none':'flex';
+
+  if(isOwner){
+    // Dono: atualiza contador de views no botão de views (ou exibe direto)
+    _loadViewsForOwner();
+    return;
+  }
+
+  // Visitante: carrega reações do item atual
+  const item=SV_ITEMS[SV_IDX];
+  if(!item)return;
+  await _loadReactions(SV_UID,item.id);
 }
 
-window.toggleLike=async()=>{
-  if(!CU||!SV_UID)return;
-  const btn=document.getElementById('svLikeBtn');
-  const key=btn._key;if(!key)return;
-  const wasLiked=!!btn._liked;
-  const newLiked=!wasLiked;
-  const newCount=Math.max(0,(btn._count||0)+(newLiked?1:-1));
-  // Otimista
-  document.getElementById('svLikeIcon').textContent=newLiked?'❤️':'🤍';
-  document.getElementById('svLikeCount').textContent=fmt(newCount);
-  btn._liked=newLiked;btn._count=newCount;
-  btn.classList.toggle('liked',newLiked);
-  if(newLiked){
-    const ic=document.getElementById('svLikeIcon');
-    ic.style.transform='scale(1.6)';setTimeout(()=>{ic.style.transform='scale(1)';},280);
-  }
+/* ── Carrega reações do Firestore ── */
+async function _loadReactions(ownerId,statusId){
+  if(!ownerId||!statusId||!CU)return;
+  _currentReactions={};_myReaction=null;
   try{
-    // Salva contagem + mapa de usuários corretamente
-    const likeData={count:newCount};
-    likeData['users.'+CU.uid]=newLiked;
-    await setDoc(doc(db,'likes',key),likeData,{merge:true});
-    // Se curtiu, salva quem curtiu em subcoleção para exibir no painel
-    if(newLiked){
-      await setDoc(doc(db,'likes',key,'likers',CU.uid),{
-        uid:CU.uid,name:UD.name||'',photoURL:UD.photoURL||'',avClass:UD.avClass||'av-1',
-        ts:serverTimestamp()
-      });
-    }else{
-      // Remove do sub-doc se descurtiu
-      const {deleteDoc}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-      await deleteDoc(doc(db,'likes',key,'likers',CU.uid)).catch(()=>{});
+    const rKey=`${ownerId}_${statusId}`;
+    // Documento principal de reações
+    const snap=await getDoc(doc(db,'reactions',rKey));
+    if(snap.exists()){
+      const d=snap.data();
+      _currentReactions=d.counts||{};
+      _myReaction=d.users?.[CU.uid]||null;
     }
-  }catch(e){
-    // Reverte
-    document.getElementById('svLikeIcon').textContent=wasLiked?'❤️':'🤍';
-    document.getElementById('svLikeCount').textContent=fmt(wasLiked?(newCount+1):Math.max(0,newCount-1));
-    btn._liked=wasLiked;btn._count=wasLiked?(newCount+1):Math.max(0,newCount-1);
-    btn.classList.toggle('liked',wasLiked);
-    showToast('❌ Erro ao curtir. Tente novamente.');
+  }catch(e){}
+  _renderReactionUI();
+}
+
+/* ── Renderiza a UI de reações ── */
+function _renderReactionUI(){
+  const reactBtn=document.getElementById('svReactBtn');
+  const myReactionEl=document.getElementById('svMyReaction');
+  const reactCountEl=document.getElementById('svReactionCount');
+  const reactionsRow=document.getElementById('svReactionsRow');
+
+  // Botão principal
+  if(reactBtn){
+    reactBtn.classList.toggle('reacted',!!_myReaction);
+    if(myReactionEl)myReactionEl.textContent=_myReaction||'😊';
+    const total=Object.values(_currentReactions).reduce((a,b)=>a+b,0);
+    if(reactCountEl)reactCountEl.textContent=total>0?`${total} reações`:'Reagir';
+  }
+
+  // Chips de reações rápidas (chips acima da barra de ações)
+  if(reactionsRow){
+    const sorted=Object.entries(_currentReactions)
+      .filter(([,c])=>c>0)
+      .sort(([,a],[,b])=>b-a)
+      .slice(0,5);
+    if(sorted.length>0){
+      reactionsRow.classList.add('show');
+      reactionsRow.innerHTML=sorted.map(([emoji,count])=>`
+        <div class="sv-reaction-chip${_myReaction===emoji?' mine':''}" onclick="selectReaction('${emoji}')">
+          ${emoji} <span>${count}</span>
+        </div>`).join('');
+    }else{
+      reactionsRow.classList.remove('show');
+      reactionsRow.innerHTML='';
+    }
+  }
+
+  // Rebuild picker grid
+  const grid=document.getElementById('svRpGrid');
+  if(grid){
+    grid.innerHTML=REACTION_EMOJIS.map(e=>{
+      const count=_currentReactions[e]||0;
+      const isMine=_myReaction===e;
+      return`<div class="sv-rp-emoji${isMine?' selected':''}" onclick="selectReaction('${e}')">
+        ${e}${count>0?`<span class="rp-count">${count}</span>`:''}
+      </div>`;
+    }).join('');
+  }
+}
+
+/* ── Abre/fecha o picker de reações ── */
+window.toggleReactionPicker=()=>{
+  const picker=document.getElementById('svReactionPicker');
+  if(!picker)return;
+  _reactionPickerOpen=!_reactionPickerOpen;
+  picker.classList.toggle('open',_reactionPickerOpen);
+  // Pausa/retoma o progresso usando o sistema global de pausa
+  if(_reactionPickerOpen){
+    if(window._svPause)window._svPause();
+    else clearTimeout(VT);
+  }else{
+    if(window._svResume)window._svResume();
   }
 };
 
-/* ── PAINEL QUEM VIU / CURTIU ── */
+/* Fecha o picker ao tocar fora */
+document.addEventListener('click',e=>{
+  const picker=document.getElementById('svReactionPicker');
+  const btn=document.getElementById('svReactBtn');
+  if(picker&&_reactionPickerOpen&&!picker.contains(e.target)&&btn&&!btn.contains(e.target)){
+    _reactionPickerOpen=false;picker.classList.remove('open');
+  }
+},{capture:true,passive:true});
+
+/* ── Seleciona uma reação ── */
+window.selectReaction=async(emoji)=>{
+  if(!CU||!SV_UID)return;
+  const item=SV_ITEMS[SV_IDX];if(!item)return;
+  const rKey=`${SV_UID}_${item.id}`;
+  const prev=_myReaction;
+  const isToggle=prev===emoji; // Remove se clicou no mesmo
+
+  // Otimista
+  if(prev)_currentReactions[prev]=Math.max(0,(_currentReactions[prev]||1)-1);
+  if(!isToggle){_currentReactions[emoji]=(_currentReactions[emoji]||0)+1;_myReaction=emoji;}
+  else{_myReaction=null;}
+  _renderReactionUI();
+
+  // Fecha picker
+  if(_reactionPickerOpen){window.toggleReactionPicker();}
+
+  // Animação de emoji voando
+  if(!isToggle){
+    const fly=document.createElement('div');
+    fly.className='emoji-fly';fly.textContent=emoji;
+    const btn=document.getElementById('svReactBtn');
+    const rect=btn?btn.getBoundingClientRect():{left:50,top:window.innerHeight-80};
+    fly.style.left=(rect.left+rect.width/2-16)+'px';
+    fly.style.top=(rect.top-10)+'px';
+    document.body.appendChild(fly);
+    setTimeout(()=>fly.remove(),1000);
+  }
+
+  // Persiste no Firestore
+  try{
+    const update={'counts':_currentReactions,[`users.${CU.uid}`]:isToggle?null:emoji};
+    if(isToggle)update[`users.${CU.uid}`]=null; // deleteField não disponível direto, usa null e filtra
+    await setDoc(doc(db,'reactions',rKey),update,{merge:true});
+    // Notifica o dono do status
+    if(!isToggle && SV_UID !== CU.uid) _notifyOwnerReaction(SV_UID, emoji);
+    // Salva também quem reagiu (para o painel do dono)
+    const reactorDoc=doc(db,'reactions',rKey,'reactors',CU.uid);
+    if(!isToggle){
+      await setDoc(reactorDoc,{
+        uid:CU.uid,name:UD.name||'',photoURL:UD.photoURL||'',avClass:UD.avClass||'av-1',
+        emoji,ts:serverTimestamp()
+      });
+    }else{
+      const {deleteDoc}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      await deleteDoc(reactorDoc).catch(()=>{});
+    }
+  }catch(e){
+    // Reverte em caso de erro
+    if(prev)_currentReactions[prev]=(_currentReactions[prev]||0)+1;
+    if(!isToggle)_currentReactions[emoji]=Math.max(0,(_currentReactions[emoji]||1)-1);
+    _myReaction=prev;
+    _renderReactionUI();
+    showToast('❌ Erro ao reagir. Tente novamente.');
+  }
+};
+
+/* ── Views (carregadas pelo dono) ── */
+async function _loadViewsForOwner(){
+  if(!SV_UID||SV_UID!==CU?.uid)return;
+  try{
+    const snap=await getDocs(collection(db,'views',SV_UID,'viewers'));
+    const total=snap.size;
+    // Atualiza o contador no viewsMetricBar (já existente no app)
+    const metricNum=document.getElementById('viewsMetricNum');
+    if(metricNum)metricNum.textContent=total;
+  }catch(e){}
+}
+
+/* ── PAINEL QUEM VIU / REAGIU ── */
 let _infoPanelTab='views';
+let _reactionFilter=null; // filtrar por emoji no painel
 
 window.openInfoPanel=async(tab='views')=>{
-  _infoPanelTab=tab;
+  _infoPanelTab=tab;_reactionFilter=null;
   document.getElementById('svInfoOv').classList.add('open');
   document.getElementById('svInfoPanel').classList.add('open');
   switchInfoTab(tab);
@@ -3328,39 +3857,94 @@ window.openInfoPanel=async(tab='views')=>{
 window.closeInfoPanel=()=>{
   document.getElementById('svInfoOv').classList.remove('open');
   document.getElementById('svInfoPanel').classList.remove('open');
+  _reactionFilter=null;
 };
+
 window.switchInfoTab=async(tab)=>{
-  _infoPanelTab=tab;
+  _infoPanelTab=tab;_reactionFilter=null;
   document.getElementById('svTabViews').classList.toggle('active',tab==='views');
-  document.getElementById('svTabLikes').classList.toggle('active',tab==='likes');
+  document.getElementById('svTabReactions').classList.toggle('active',tab==='reactions');
+  const summary=document.getElementById('svReactionsSummary');
   const list=document.getElementById('svInfoList');
-  list.innerHTML='<div class="sv-info-empty"><span class="sp"></span> Carregando...</div>';
-  try{
-    if(tab==='views'){
-      const ownerId=SV_UID;
-      if(!ownerId){list.innerHTML='<div class="sv-info-empty">—</div>';return;}
+  list.innerHTML='<div class="sv-info-empty">Carregando...</div>';
+
+  if(tab==='views'){
+    summary.style.display='none';
+    const ownerId=SV_UID;
+    if(!ownerId){list.innerHTML='<div class="sv-info-empty">—</div>';return;}
+    try{
       const snap=await getDocs(collection(db,'views',ownerId,'viewers'));
-      const rows=snap.docs.map(d=>d.data());
+      const rows=snap.docs.map(d=>d.data()).sort((a,b)=>(b.ts?.seconds||0)-(a.ts?.seconds||0));
       document.getElementById('svTabViewsN').textContent=rows.length?`(${rows.length})`:'';
       if(!rows.length){list.innerHTML='<div class="sv-info-empty">👁 Ninguém visualizou ainda</div>';return;}
-      list.innerHTML=rows.map(r=>_infoRow(r,'👁')).join('');
-    }else{
-      const btn=document.getElementById('svLikeBtn');
-      const key=btn._key;
-      if(!key){list.innerHTML='<div class="sv-info-empty">❤️ Nenhuma curtida ainda</div>';return;}
-      const snap=await getDocs(collection(db,'likes',key,'likers'));
-      const rows=snap.docs.map(d=>d.data());
-      document.getElementById('svTabLikesN').textContent=rows.length?`(${rows.length})`:'';
-      if(!rows.length){list.innerHTML='<div class="sv-info-empty">❤️ Nenhuma curtida ainda</div>';return;}
-      list.innerHTML=rows.map(r=>_infoRow(r,'❤️')).join('');
-    }
-  }catch(e){list.innerHTML='<div class="sv-info-empty">Erro ao carregar.</div>';}
+      list.innerHTML=rows.map(r=>_infoRow(r,'👁','Visualizou')).join('');
+    }catch(e){list.innerHTML='<div class="sv-info-empty">Erro ao carregar.</div>';}
+
+  }else{
+    // Aba de reações — disponível para todos (dono e visitantes)
+    const item=SV_ITEMS[SV_IDX];if(!item){list.innerHTML='<div class="sv-info-empty">—</div>';return;}
+    const rKey=`${SV_UID}_${item.id}`;
+    try{
+      const snap=await getDocs(collection(db,'reactions',rKey,'reactors'));
+      const rows=snap.docs.map(d=>d.data()).sort((a,b)=>(b.ts?.seconds||0)-(a.ts?.seconds||0));
+      document.getElementById('svTabReactionsN').textContent=rows.length?`(${rows.length})`:'';
+      if(!rows.length){
+        summary.style.display='none';
+        list.innerHTML='<div class="sv-info-empty">✨ Nenhuma reação ainda</div>';return;
+      }
+      // Resumo por emoji
+      const byEmoji={};
+      rows.forEach(r=>{byEmoji[r.emoji]=(byEmoji[r.emoji]||0)+1;});
+      const emojiSorted=Object.entries(byEmoji).sort(([,a],[,b])=>b-a);
+      summary.style.display='flex';
+      summary.innerHTML=`<div class="sv-rs-chip active" onclick="filterReactions(null)">Todos (${rows.length})</div>`
+        +emojiSorted.map(([e,c])=>`<div class="sv-rs-chip" onclick="filterReactions('${e}')">${e} ${c}</div>`).join('');
+      list.innerHTML=rows.map(r=>_infoRow(r,r.emoji,null)).join('');
+    }catch(e){list.innerHTML='<div class="sv-info-empty">Erro ao carregar.</div>';}
+  }
 };
-function _infoRow(r,icon){
+
+window.filterReactions=(emoji)=>{
+  _reactionFilter=emoji;
+  // Re-render somente a lista
+  const item=SV_ITEMS[SV_IDX];if(!item)return;
+  const rKey=`${SV_UID}_${item.id}`;
+  const summary=document.getElementById('svReactionsSummary');
+  // Atualiza chips ativos
+  summary.querySelectorAll('.sv-rs-chip').forEach(c=>{
+    const txt=c.textContent.trim();
+    c.classList.toggle('active', emoji?txt.startsWith(emoji):txt.startsWith('Todos'));
+  });
+  // Re-fetch lista
+  const list=document.getElementById('svInfoList');
+  list.innerHTML='<div class="sv-info-empty">Filtrando...</div>';
+  getDocs(collection(db,'reactions',rKey,'reactors')).then(snap=>{
+    const rows=snap.docs.map(d=>d.data()).sort((a,b)=>(b.ts?.seconds||0)-(a.ts?.seconds||0));
+    const filtered=emoji?rows.filter(r=>r.emoji===emoji):rows;
+    list.innerHTML=filtered.length?filtered.map(r=>_infoRow(r,r.emoji,null)).join('')
+      :'<div class="sv-info-empty">Nenhuma reação aqui</div>';
+  }).catch(()=>{list.innerHTML='<div class="sv-info-empty">Erro ao filtrar.</div>';});
+};
+
+function _infoRow(r,icon,label){
   const avHtml=r.photoURL
     ?`<div class="sv-info-av"><img src="${r.photoURL}" alt=""></div>`
     :`<div class="sv-info-av ${r.avClass||'av-1'}">${(r.name||'?')[0].toUpperCase()}</div>`;
-  return`<div class="sv-info-row">${avHtml}<div class="sv-info-name">${r.name||'Usuário'}</div><div class="sv-info-meta">${icon}</div></div>`;
+  const timeAgo=r.ts?.seconds?_relTime(r.ts.seconds):'';
+  return`<div class="sv-info-row">${avHtml}
+    <div style="flex:1;min-width:0">
+      <div class="sv-info-name">${r.name||'Usuário'}</div>
+      ${timeAgo?`<div class="sv-info-time">${timeAgo}</div>`:''}
+    </div>
+    <div class="sv-info-meta">${icon}</div>
+  </div>`;
+}
+function _relTime(sec){
+  const d=Math.floor((Date.now()/1000)-sec);
+  if(d<60)return'Agora mesmo';
+  if(d<3600)return`${Math.floor(d/60)}min atrás`;
+  if(d<86400)return`${Math.floor(d/3600)}h atrás`;
+  return`${Math.floor(d/86400)}d atrás`;
 }
 
 /* ── EDITOR ── */
@@ -5498,30 +6082,589 @@ setTimeout(startFlashBannerTimer,2000);
   obs.observe(cs,{attributes:true,attributeFilter:['class']});
 })();
 
-/* ── SWIPE entre usuários no viewer (igual WhatsApp) ── */
+/* ══════════════════════════════════════════════════════
+   SISTEMA DE COMENTÁRIOS
+   ══════════════════════════════════════════════════════ */
+
+let _commentsUnsub = null;
+let _currentCommentStatusId = null;
+let _currentCommentOwnerId = null;
+
+/* ── Abre painel de comentários ── */
+window.openCommentsPanel = () => {
+  if (!CU || !SV_UID || !SV_ITEMS[SV_IDX]) return;
+  const item = SV_ITEMS[SV_IDX];
+  _currentCommentOwnerId = SV_UID;
+  _currentCommentStatusId = item.id;
+
+  // Pausa o viewer
+  if (window._svPause) window._svPause();
+  clearTimeout(VT);
+
+  // Exibe painel
+  document.getElementById('svCommentsOv').classList.add('open');
+  document.getElementById('svCommentsPanel').classList.add('open');
+
+  // Atualiza avatar do input
+  const myAvEl = document.getElementById('svCpMyAv');
+  if (myAvEl) {
+    if (UD.photoURL) {
+      myAvEl.innerHTML = `<img src="${UD.photoURL}" alt="">`;
+      myAvEl.className = 'sv-cp-av';
+    } else {
+      myAvEl.className = `sv-cp-av ${UD.avClass || 'av-1'}`;
+      myAvEl.textContent = (UD.name || '?')[0].toUpperCase();
+    }
+  }
+
+  // Inicia listener de comentários em tempo real
+  _subscribeComments(_currentCommentOwnerId, _currentCommentStatusId);
+};
+
+/* ── Fecha painel de comentários ── */
+window.closeCommentsPanel = () => {
+  document.getElementById('svCommentsOv').classList.remove('open');
+  document.getElementById('svCommentsPanel').classList.remove('open');
+  if (_commentsUnsub) { _commentsUnsub(); _commentsUnsub = null; }
+  if (window._svResume) window._svResume();
+};
+
+/* ── Listener em tempo real dos comentários ── */
+function _subscribeComments(ownerId, statusId) {
+  if (_commentsUnsub) { _commentsUnsub(); _commentsUnsub = null; }
+  const cmtCol = collection(db, 'comments', `${ownerId}_${statusId}`, 'msgs');
+  const q = query(cmtCol, orderBy('ts', 'asc'), limit(100));
+  _commentsUnsub = onSnapshot(q, snap => {
+    const comments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    _renderComments(comments, ownerId, statusId);
+  }, err => console.warn('comments err', err));
+}
+
+/* ── Renderiza lista de comentários ── */
+function _renderComments(comments, ownerId, statusId) {
+  const list = document.getElementById('svCpList');
+  const countEl = document.getElementById('svCpCount');
+  const viewerCountEl = document.getElementById('svCommentCount');
+  if (!list) return;
+
+  if (countEl) countEl.textContent = comments.length;
+  if (viewerCountEl) viewerCountEl.textContent = comments.length;
+
+  if (comments.length === 0) {
+    list.innerHTML = `<div class="sv-cp-empty">
+      <div class="sv-cp-empty-icon">💬</div>
+      <div>Nenhum comentário ainda</div>
+      <div style="font-size:12px;margin-top:4px;color:var(--muted)">Seja o primeiro a comentar!</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = comments.map(c => {
+    const isOwner = c.uid === CU?.uid;
+    const isStatusOwner = c.uid === ownerId;
+    const user = UC.find(u => u.id === c.uid);
+    const isVip = user?.vip || false;
+
+    let avHtml = '';
+    if (c.photoURL) {
+      avHtml = `<div class="sv-cmt-av"><img src="${c.photoURL}" alt=""></div>`;
+    } else {
+      avHtml = `<div class="sv-cmt-av ${c.avClass || 'av-1'}">${(c.name || '?')[0].toUpperCase()}</div>`;
+    }
+
+    const ts = c.ts?.toMillis ? c.ts.toMillis() : (c.tsMs || Date.now());
+    const timeStr = timeSince(ts);
+    const likes = c.likes || 0;
+    const likedByMe = (c.likedBy || []).includes(CU?.uid);
+
+    return `<div class="sv-cmt" id="cmt-${c.id}">
+      ${avHtml}
+      <div class="sv-cmt-bubble">
+        <div class="sv-cmt-name">
+          ${c.name || 'Anônimo'}
+          ${isVip ? '<span class="cmt-vip">VIP 👑</span>' : ''}
+          ${isStatusOwner && c.uid !== CU?.uid ? '<span style="font-size:9px;background:rgba(124,58,237,.2);color:var(--accent2);padding:1px 5px;border-radius:50px">Vendedor</span>' : ''}
+        </div>
+        <div class="sv-cmt-text">${_escapeHtml(c.text)}</div>
+        <div class="sv-cmt-meta">
+          <span class="sv-cmt-time">${timeStr}</span>
+          <button class="sv-cmt-like ${likedByMe ? 'liked' : ''}" onclick="likeComment('${c.id}','${ownerId}','${statusId}')">
+            ${likedByMe ? '❤️' : '🤍'} ${likes > 0 ? likes : ''}
+          </button>
+          ${isOwner || UD?.isAdmin ? `<button class="sv-cmt-del" onclick="deleteComment('${c.id}','${ownerId}','${statusId}')">Apagar</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Scroll ao final
+  setTimeout(() => { list.scrollTop = list.scrollHeight; }, 50);
+}
+
+function _escapeHtml(t) {
+  return (t || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+/* ── Verifica se pode enviar ── */
+window.svCpCheckSend = () => {
+  const inp = document.getElementById('svCpInput');
+  const btn = document.getElementById('svCpSendBtn');
+  const hasText = inp && inp.value.trim().length > 0;
+  if (btn) {
+    btn.disabled = !hasText;
+    btn.classList.toggle('ready', hasText);
+  }
+};
+
+/* ── Envia comentário ── */
+window.submitComment = async () => {
+  const inp = document.getElementById('svCpInput');
+  const text = inp?.value.trim();
+  if (!text || !CU || !_currentCommentOwnerId || !_currentCommentStatusId) return;
+
+  inp.value = '';
+  inp.style.height = 'auto';
+  svCpCheckSend();
+
+  try {
+    const cmtKey = `${_currentCommentOwnerId}_${_currentCommentStatusId}`;
+    await addDoc(collection(db, 'comments', cmtKey, 'msgs'), {
+      uid: CU.uid,
+      name: UD.name || 'Anônimo',
+      photoURL: UD.photoURL || '',
+      avClass: UD.avClass || 'av-1',
+      text,
+      ts: serverTimestamp(),
+      tsMs: Date.now(),
+      likes: 0,
+      likedBy: []
+    });
+
+    // Notifica o dono do status (se não for o próprio)
+    if (_currentCommentOwnerId !== CU.uid) {
+      _addNotification(_currentCommentOwnerId, {
+        type: 'comment',
+        icon: '💬',
+        iconClass: 'purple',
+        title: `${UD.name || 'Alguém'} comentou no seu produto`,
+        body: text.length > 60 ? text.slice(0, 60) + '...' : text,
+        fromUid: CU.uid,
+        fromName: UD.name || '',
+        fromPhoto: UD.photoURL || '',
+        fromAvClass: UD.avClass || 'av-1',
+        statusId: _currentCommentStatusId,
+        ts: Date.now()
+      });
+
+      // Dispara notificação nativa se o dono for o usuário atual do app
+      if (window.sendNativeNotification) {
+        window.sendNativeNotification(
+          `💬 ${UD.name || 'Alguém'} comentou`,
+          text,
+          { type: 'comment', ownerId: _currentCommentOwnerId }
+        );
+      }
+    }
+  } catch (e) {
+    console.error('submitComment error', e);
+    showToast('❌ Erro ao enviar comentário');
+  }
+};
+
+/* ── Curtir comentário ── */
+window.likeComment = async (cmtId, ownerId, statusId) => {
+  if (!CU) return;
+  const cmtKey = `${ownerId}_${statusId}`;
+  const cmtRef = doc(db, 'comments', cmtKey, 'msgs', cmtId);
+  try {
+    const snap = await getDoc(cmtRef);
+    if (!snap.exists()) return;
+    const data = snap.data();
+    const likedBy = data.likedBy || [];
+    const alreadyLiked = likedBy.includes(CU.uid);
+    await updateDoc(cmtRef, {
+      likes: increment(alreadyLiked ? -1 : 1),
+      likedBy: alreadyLiked
+        ? likedBy.filter(id => id !== CU.uid)
+        : [...likedBy, CU.uid]
+    });
+  } catch (e) { console.warn('likeComment error', e); }
+};
+
+/* ── Apagar comentário ── */
+window.deleteComment = async (cmtId, ownerId, statusId) => {
+  if (!CU) return;
+  if (!confirm('Apagar este comentário?')) return;
+  const cmtKey = `${ownerId}_${statusId}`;
+  try {
+    const { deleteDoc: dd } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    await dd(doc(db, 'comments', cmtKey, 'msgs', cmtId));
+    showToast('🗑️ Comentário apagado');
+  } catch (e) { showToast('❌ Erro ao apagar'); }
+};
+
+/* ══════════════════════════════════════════════════════
+   SISTEMA DE NOTIFICAÇÕES IN-APP
+   ══════════════════════════════════════════════════════ */
+
+let _notifications = [];
+let _notifUnreadCount = 0;
+let _notifToastTimer = null;
+let _notifCenterOpen = false;
+
+/* ── Adiciona notificação localmente e salva no Firestore ── */
+async function _addNotification(targetUid, notif) {
+  try {
+    await addDoc(collection(db, 'notifications', targetUid, 'items'), {
+      ...notif,
+      read: false,
+      createdAt: serverTimestamp()
+    });
+  } catch (e) { console.warn('_addNotification err', e); }
+}
+
+/* ── Inicia listener de notificações do usuário logado ── */
+function startNotificationsListener() {
+  if (!CU) return;
+  const notifQ = query(
+    collection(db, 'notifications', CU.uid, 'items'),
+    orderBy('createdAt', 'desc'),
+    limit(50)
+  );
+  onSnapshot(notifQ, snap => {
+    _notifications = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const unread = _notifications.filter(n => !n.read).length;
+    _updateNotifBadge(unread);
+
+    // Mostra toast para notificação mais nova não lida (se app em foco)
+    const newest = _notifications[0];
+    if (newest && !newest.read && !_notifCenterOpen) {
+      _showNotifToast(newest);
+    }
+  }, err => console.warn('notif listener err', err));
+}
+
+/* ── Atualiza o badge do sino ── */
+function _updateNotifBadge(count) {
+  _notifUnreadCount = count;
+  const badge = document.getElementById('notifBadge');
+  if (!badge) return;
+  if (count > 0) {
+    badge.style.display = 'flex';
+    badge.textContent = count > 99 ? '99+' : String(count);
+  } else {
+    badge.style.display = 'none';
+  }
+  // Atualiza badge nativo
+  if (window.setNativeBadge) window.setNativeBadge(count);
+}
+
+/* ── Mostra toast de notificação in-app ── */
+function _showNotifToast(notif) {
+  const toast = document.getElementById('notifToast');
+  const avEl = document.getElementById('ntAv');
+  const titleEl = document.getElementById('ntTitle');
+  const textEl = document.getElementById('ntText');
+  if (!toast || !titleEl || !textEl) return;
+
+  // Atualiza conteúdo
+  if (avEl) {
+    if (notif.fromPhoto) {
+      avEl.innerHTML = `<img src="${notif.fromPhoto}" alt="">`;
+      avEl.className = 'nt-av';
+    } else if (notif.fromAvClass) {
+      avEl.innerHTML = (notif.fromName || '?')[0].toUpperCase();
+      avEl.className = `nt-av ${notif.fromAvClass}`;
+    } else {
+      avEl.innerHTML = notif.icon || '🔔';
+      avEl.className = 'nt-av';
+      avEl.style.background = 'var(--grad-main)';
+    }
+  }
+  titleEl.textContent = notif.title || 'ShopFlow';
+  textEl.textContent = notif.body || '';
+
+  // Guarda dados para click
+  toast.dataset.notifId = notif.id;
+  toast.dataset.notifType = notif.type || '';
+
+  // Mostra
+  clearTimeout(_notifToastTimer);
+  toast.classList.add('show');
+  _notifToastTimer = setTimeout(() => toast.classList.remove('show'), 4500);
+}
+
+/* ── Click no toast ── */
+window.handleNotifToastClick = () => {
+  const toast = document.getElementById('notifToast');
+  toast?.classList.remove('show');
+  openNotificationCenter();
+};
+
+/* ── Abre centro de notificações ── */
+window.openNotificationCenter = () => {
+  _notifCenterOpen = true;
+  document.getElementById('notifCenterOv').classList.add('open');
+  document.getElementById('notifCenter').classList.add('open');
+  _renderNotifCenter();
+  // Marca todas como lidas
+  _markAllNotificationsRead();
+};
+
+/* ── Fecha centro de notificações ── */
+window.closeNotificationCenter = () => {
+  _notifCenterOpen = false;
+  document.getElementById('notifCenterOv').classList.remove('open');
+  document.getElementById('notifCenter').classList.remove('open');
+};
+
+/* ── Renderiza a lista de notificações ── */
+function _renderNotifCenter() {
+  const list = document.getElementById('ncList');
+  if (!list) return;
+
+  if (_notifications.length === 0) {
+    list.innerHTML = `<div class="nc-empty">
+      <div class="nc-empty-icon">🔕</div>
+      <div class="nc-empty-t">Nenhuma notificação</div>
+      <div class="nc-empty-s">Quando alguém comentar ou reagir ao seu produto, você verá aqui</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = _notifications.map(n => {
+    const ts = n.createdAt?.toMillis ? n.createdAt.toMillis() : (n.ts || Date.now());
+    const timeStr = timeSince(ts);
+    const unread = !n.read;
+
+    let avHtml = '';
+    if (n.fromPhoto) {
+      avHtml = `<div class="nc-item-av"><img src="${n.fromPhoto}" alt=""></div>`;
+    } else if (n.icon) {
+      avHtml = `<div class="nc-icon-wrap ${n.iconClass || 'purple'}">${n.icon}</div>`;
+    } else {
+      avHtml = `<div class="nc-icon-wrap purple">🔔</div>`;
+    }
+
+    return `<div class="nc-item ${unread ? 'unread' : ''}" onclick="handleNotifClick('${n.id}','${n.type || ''}','${n.fromUid || ''}')">
+      ${unread ? '<div style="width:6px;height:6px;border-radius:50%;background:var(--accent2);flex-shrink:0;margin-top:14px"></div>' : '<div style="width:6px"></div>'}
+      ${avHtml}
+      <div class="nc-item-body">
+        <div class="nc-item-t">${_escapeHtml(n.title || '')}</div>
+        ${n.body ? `<div class="nc-item-s">${_escapeHtml(n.body)}</div>` : ''}
+        <div class="nc-item-time">${timeStr}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── Clica em uma notificação ── */
+window.handleNotifClick = (id, type, fromUid) => {
+  closeNotificationCenter();
+  // Navegar conforme tipo
+  if (type === 'comment' || type === 'reaction') {
+    if (fromUid) {
+      const user = UC.find(u => u.id === fromUid);
+      if (user && svGetItems(user).length > 0) {
+        setTimeout(() => openViewer(fromUid), 200);
+      }
+    }
+  }
+};
+
+/* ── Marca todas como lidas ── */
+async function _markAllNotificationsRead() {
+  if (!CU || _notifications.filter(n => !n.read).length === 0) return;
+  _updateNotifBadge(0);
+  try {
+    const batch = writeBatch(db);
+    _notifications.filter(n => !n.read).forEach(n => {
+      batch.update(doc(db, 'notifications', CU.uid, 'items', n.id), { read: true });
+    });
+    await batch.commit();
+  } catch (e) { console.warn('mark read err', e); }
+}
+
+/* ── Limpa todas as notificações ── */
+window.clearAllNotifications = async () => {
+  if (!CU || _notifications.length === 0) return;
+  try {
+    const batch = writeBatch(db);
+    const { deleteDoc: dd } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    _notifications.forEach(n => {
+      batch.delete(doc(db, 'notifications', CU.uid, 'items', n.id));
+    });
+    await batch.commit();
+    _notifications = [];
+    _renderNotifCenter();
+    _updateNotifBadge(0);
+    showToast('🗑️ Notificações limpas');
+  } catch (e) { showToast('❌ Erro ao limpar'); }
+};
+
+/* ── Notificação ao receber reação (chamado pelo selectReaction) ── */
+function _notifyOwnerReaction(ownerUid, emoji) {
+  if (!CU || ownerUid === CU.uid) return;
+  _addNotification(ownerUid, {
+    type: 'reaction',
+    icon: emoji,
+    iconClass: 'gold',
+    title: `${UD.name || 'Alguém'} reagiu ao seu produto`,
+    body: `Reação: ${emoji}`,
+    fromUid: CU.uid,
+    fromName: UD.name || '',
+    fromPhoto: UD.photoURL || '',
+    fromAvClass: UD.avClass || 'av-1',
+    ts: Date.now()
+  });
+}
+
+/* ── Solicitar permissão de notificação nativa ── */
+window.requestPushPermission = () => {
+  if (window.requestNativeNotificationPermission) {
+    window.requestNativeNotificationPermission();
+    window._onNotificationPermissionResult = (granted, token) => {
+      if (granted === 'true' || granted === true) {
+        showToast('✅ Notificações ativadas!');
+        if (token && CU) {
+          updateDoc(doc(db, 'users', CU.uid), { pushToken: token }).catch(() => {});
+        }
+      } else {
+        showToast('⚠️ Notificações não permitidas');
+      }
+    };
+  } else {
+    showToast('🔔 Notificações configuradas!');
+  }
+};
 (()=>{
   const sv=document.getElementById('sv');
   if(!sv)return;
-  let _tx=0,_ty=0,_dragging=false;
+
+  // ─── ESTADO DE PAUSA ───────────────────────────────────────────
+  let _pauseTimer=null;       // timeout para detectar hold
+  let _isPaused=false;        // flag de pausa atual
+  let _pausedFillW=0;         // largura salva da barra ao pausar
+  let _pausedRemDur=0;        // tempo restante ao pausar (ms)
+  let _touchStartX=0,_touchStartY=0;
+  let _touchStartTime=0;
+  let _isSwiping=false;
+
+  const HOLD_MS=180; // ms para considerar "segurar"
+
+  function _pauseViewer(){
+    if(_isPaused||!sv.classList.contains('open'))return;
+    _isPaused=true;
+    sv.classList.add('paused');
+    // Pausa vídeo
+    const vid=document.getElementById('svVideo');
+    if(vid&&!vid.paused)vid.pause();
+    // Captura posição atual da barra de progresso
+    const idx=window.SV_IDX||0;
+    const fill=document.getElementById('svFill'+idx);
+    if(fill){
+      // Lê a largura real computada (CSS transition em andamento)
+      const computed=parseFloat(getComputedStyle(fill).width);
+      const total=fill.parentElement?parseFloat(getComputedStyle(fill.parentElement).width):window.innerWidth;
+      _pausedFillW=total>0?(computed/total*100):0;
+      fill.style.transition='none';
+      fill.style.width=_pausedFillW+'%';
+    }
+    clearTimeout(window.VT);
+  }
+
+  function _resumeViewer(){
+    if(!_isPaused)return;
+    _isPaused=false;
+    sv.classList.remove('paused');
+    // Retoma vídeo
+    const vid=document.getElementById('svVideo');
+    if(vid&&vid.paused&&vid.src)vid.play().catch(()=>{});
+    // Retoma barra de progresso
+    const idx=window.SV_IDX||0;
+    const fill=document.getElementById('svFill'+idx);
+    const item=window.SV_ITEMS?window.SV_ITEMS[idx]:null;
+    if(fill){
+      const baseDur=item?.video?30000:8000;
+      const remFraction=(100-_pausedFillW)/100;
+      const remDur=Math.max(200,baseDur*remFraction);
+      fill.style.transition=`width ${remDur/1000}s linear`;
+      fill.style.width='100%';
+      clearTimeout(window.VT);
+      window.VT=setTimeout(()=>window.svNavNext&&window.svNavNext(),remDur+200);
+    }
+  }
+
+  // ─── TOUCH EVENTS ──────────────────────────────────────────────
   sv.addEventListener('touchstart',e=>{
     if(e.touches.length!==1)return;
-    _tx=e.touches[0].clientX;_ty=e.touches[0].clientY;_dragging=true;
+    _touchStartX=e.touches[0].clientX;
+    _touchStartY=e.touches[0].clientY;
+    _touchStartTime=Date.now();
+    _isSwiping=false;
+    // Inicia timer de hold para pausar
+    _pauseTimer=setTimeout(()=>{
+      if(!_isSwiping)_pauseViewer();
+    },HOLD_MS);
   },{passive:true});
+
+  sv.addEventListener('touchmove',e=>{
+    if(e.touches.length!==1)return;
+    const dx=e.touches[0].clientX-_touchStartX;
+    const dy=e.touches[0].clientY-_touchStartY;
+    // Se moveu mais de 10px, é swipe — cancela pausa
+    if(Math.abs(dx)>10||Math.abs(dy)>10){
+      _isSwiping=true;
+      clearTimeout(_pauseTimer);
+      if(_isPaused)_resumeViewer();
+    }
+  },{passive:true});
+
   sv.addEventListener('touchend',e=>{
-    if(!_dragging)return;_dragging=false;
-    const dx=e.changedTouches[0].clientX-_tx;
-    const dy=e.changedTouches[0].clientY-_ty;
-    // Swipe horizontal significativo (> 60px) e mais horizontal que vertical
+    clearTimeout(_pauseTimer);
+    const dx=e.changedTouches[0].clientX-_touchStartX;
+    const dy=e.changedTouches[0].clientY-_touchStartY;
+    const dt=Date.now()-_touchStartTime;
+
+    if(_isPaused)_resumeViewer();
+
+    // Swipe horizontal significativo
     if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.2){
-      if(dx<0){
-        // Swipe esquerda → próximo usuário
-        window.svNavNext&&window.svNavNext();
-      }else{
-        // Swipe direita → usuário anterior
+      if(dx<0){window.svNavNext&&window.svNavNext();}
+      else{window.svNavPrev&&window.svNavPrev();}
+      return;
+    }
+
+    // Tap rápido sem arrastar — navega
+    if(!_isSwiping&&dt<350){
+      if(_touchStartX<window.innerWidth*0.36){
         window.svNavPrev&&window.svNavPrev();
+      }else if(_touchStartX>window.innerWidth*0.64){
+        window.svNavNext&&window.svNavNext();
       }
     }
   },{passive:true});
+
+  sv.addEventListener('touchcancel',()=>{
+    clearTimeout(_pauseTimer);
+    if(_isPaused)_resumeViewer();
+  },{passive:true});
+
+  // Mouse (desktop fallback)
+  sv.addEventListener('mousedown',e=>{
+    // Ignora cliques em botões/links
+    if(e.target.closest('button,a,.sv-react-btn,.sv-views-btn,.sv-x,.sv-delete-btn,.sv-rp-emoji,.sv-rs-chip'))return;
+    _pauseTimer=setTimeout(()=>_pauseViewer(),HOLD_MS);
+  });
+  document.addEventListener('mouseup',()=>{
+    clearTimeout(_pauseTimer);
+    if(_isPaused)_resumeViewer();
+  });
+
+  // Expõe para uso externo (ex: picker de reações já pausa manualmente)
+  window._svPause=_pauseViewer;
+  window._svResume=_resumeViewer;
+  window._svIsPaused=()=>_isPaused;
 })();
 
 </script>
