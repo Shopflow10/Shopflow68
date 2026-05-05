@@ -6114,3 +6114,34 @@ document.addEventListener('DOMContentLoaded', ()=>{
   });
 });
 </script>
+
+<script>
+// ===== FIX BARRA USAR DURAÇÃO REAL DO VIDEO =====
+document.addEventListener('DOMContentLoaded', ()=>{
+  const video = document.getElementById('svVideo');
+  const viewer = document.getElementById('sv');
+
+  if(!video || !viewer) return;
+
+  video.addEventListener('loadedmetadata', ()=>{
+    const duration = (video.duration || 8) * 1000; // ms
+
+    window._svItemDur = duration;
+    window._svItemStartTime = Date.now();
+
+    // reinicia timer correto
+    clearTimeout(window.VT);
+    window.VT = setTimeout(()=>{
+      if(window.svNavNext) window.svNavNext();
+    }, duration);
+  });
+
+  // sincronizar barra com tempo real
+  video.addEventListener('timeupdate', ()=>{
+    if(!window._svItemDur) return;
+
+    const progress = (video.currentTime / video.duration) * 100;
+    viewer.style.setProperty('--paused-w', progress + '%');
+  });
+});
+</script>
