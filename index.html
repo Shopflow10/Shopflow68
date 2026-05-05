@@ -5808,6 +5808,10 @@ window.createFlashSale=async()=>{
   if(orig&&nw>=orig){showToast('O preço da oferta deve ser menor que o original!');return;}
   if(nw<=0){showToast('Digite um preço válido!');return;}
 
+  // Desabilita botão durante o envio para evitar duplo clique
+  const submitBtn=document.querySelector('.flash-submit');
+  if(submitBtn){submitBtn.disabled=true;submitBtn.textContent='Ativando...';}
+
   const flashEndsAt=Date.now()+(FLASH_DUR_MIN*60*1000);
   const disc=orig?Math.round(((orig-nw)/orig)*100):0;
 
@@ -5815,8 +5819,9 @@ window.createFlashSale=async()=>{
     // Atualiza o status no Firestore com dados da oferta
     const statuses=[...(UD.statuses||[])];
     const idx=statuses.findIndex(s=>s.id===FLASH_SELECTED_STATUS.id);
-    if(idx<0){showToast('Produto não encontrado.');return;}
-    statuses[idx]={
+    if(idx<0){showToast('Produto não encontrado.');if(submitBtn){submitBtn.disabled=false;submitBtn.textContent='⚡ Ativar oferta relâmpago!';}return;}
+
+    const updatedStatus={
       ...statuses[idx],
       flashSale:true,
       flashPrice:formatBRL(nw),
@@ -5824,22 +5829,42 @@ window.createFlashSale=async()=>{
       flashDiscount:disc,
       flashEndsAt
     };
+    statuses[idx]=updatedStatus;
+
     console.log('[Flash] Salvando oferta relâmpago:', statuses[idx]);
     await updateDoc(doc(db,'users',CU.uid),{statuses});
+
+    // Atualiza UD local imediatamente para o re-render funcionar sem esperar o Firestore
+    if(UD){UD.statuses=statuses;}
+    // Atualiza também no cache UC se existir
+    if(window.UC){
+      const ucUser=UC.find(u=>u.id===CU.uid||u.uid===CU.uid);
+      if(ucUser)ucUser.statuses=statuses;
+    }
+
     showToast('⚡ Oferta relâmpago ativada por '+FLASH_DUR_MIN+(FLASH_DUR_MIN<60?' minutos!':(FLASH_DUR_MIN/60)+' hora(s)!'));
     closeFlashModal();
-    // Atualiza explore imediatamente
-    setTimeout(()=>{renderExplorePage();renderStatusFeed();},500);
+    // Atualiza explore e feed imediatamente com dados já atualizados
+    setTimeout(()=>{
+      if(typeof renderExplorePage==='function')renderExplorePage();
+      if(typeof renderStatusFeed==='function')renderStatusFeed();
+      patchExploreCardsFlash();
+    },300);
     startFlashBannerTimer();
   }catch(e){
     console.error('[Flash] Erro ao salvar oferta relâmpago:',e?.code,e?.message,e);
     if(e?.code==='permission-denied'){
-      showToast('❌ Sem permissão no banco. Veja as regras do Firebase.');
+      showToast('❌ Sem permissão no banco. Verifique as regras do Firebase.');
     }else if(e?.code==='not-found'){
       showToast('❌ Usuário não encontrado no banco.');
+    }else if(e?.code==='unavailable'||e?.message?.includes('network')){
+      showToast('❌ Sem conexão. Verifique sua internet e tente novamente.');
     }else{
-      showToast('❌ Erro: '+(e?.message||'Tente novamente.'));
+      showToast('❌ Erro ao publicar oferta: '+(e?.message||'Tente novamente.'));
     }
+  }finally{
+    // Sempre reabilita o botão
+    if(submitBtn){submitBtn.disabled=false;submitBtn.textContent='⚡ Ativar oferta relâmpago!';}
   }
 };
 
@@ -6181,12 +6206,17 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
 
   const HOLD_MS=250;
 
+  let _pausedVideoTime=null;
+
   function _pause(){
     if(_isPaused||!sv.classList.contains('open'))return;
     _isPaused=true;
     sv.classList.add('paused');
     const vid=document.getElementById('svVideo');
-    if(vid&&!vid.paused)vid.pause();
+    if(vid&&!vid.paused){
+      _pausedVideoTime=vid.currentTime; // salva ponto exato do vídeo
+      vid.pause();
+    }
     const idx=window.SV_IDX||0;
     const fill=document.getElementById('svFill'+idx);
     if(fill){
@@ -6204,14 +6234,21 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     _isPaused=false;
     sv.classList.remove('paused');
     const vid=document.getElementById('svVideo');
-    if(vid&&vid.paused&&vid.src)vid.play().catch(()=>{});
+    if(vid&&vid.paused&&vid.src){
+      // Restaura o ponto exato onde pausou, igual ao WhatsApp
+      if(_pausedVideoTime!==null&&!isNaN(_pausedVideoTime)){
+        vid.currentTime=_pausedVideoTime;
+      }
+      _pausedVideoTime=null;
+      vid.play().catch(()=>{});
+    }
     const idx=window.SV_IDX||0;
     const fill=document.getElementById('svFill'+idx);
     const item=window.SV_ITEMS?window.SV_ITEMS[idx]:null;
     if(fill){
       let rem;
       if(item?.video&&vid&&vid.duration&&!isNaN(vid.duration)){
-        // Para vídeo: usa o tempo restante real do vídeo
+        // Para vídeo: usa o tempo restante real do vídeo a partir do ponto atual
         rem=Math.max(200,(vid.duration-vid.currentTime)*1000);
       }else{
         const base=item?.video?30000:8000;
