@@ -6247,18 +6247,17 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
   _dbgEl.style.fontSize='11px';
   document.body.appendChild(_dbgEl);
   function _log(msg){
-    const d=document.createElement('div');
-    d.style.background='rgba(0,0,0,0.95)';
-    d.style.color='#00ff00';
-    d.style.padding='3px 6px';
-    d.style.marginBottom='2px';
-    d.style.borderRadius='4px';
-    d.style.whiteSpace='nowrap';
-    d.textContent=(Date.now()%100000)+' '+msg;
-    _dbgEl.appendChild(d);
-    if(_dbgEl.children.length>10)_dbgEl.removeChild(_dbgEl.children[0]);
+    try{
+      // Recria o container se foi removido do DOM
+      if(!document.body.contains(_dbgEl))document.body.appendChild(_dbgEl);
+      const d=document.createElement('div');
+      d.style.cssText='background:rgba(0,0,0,0.95);color:#0f0;padding:3px 6px;margin-bottom:2px;border-radius:4px;white-space:nowrap;font-size:11px;font-family:monospace;';
+      d.textContent=(Date.now()%100000)+' '+msg;
+      _dbgEl.appendChild(d);
+      if(_dbgEl.children.length>10)_dbgEl.removeChild(_dbgEl.children[0]);
+    }catch(e){console.warn('_log err',e);}
   }
-  _log('DEBUG ATIVO - abre um status');
+  _log('DEBUG ATIVO');
 
   /* ─── PAUSE: congela vídeo + barra, cancela timeout ─── */
   function _pause(){
