@@ -661,7 +661,7 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 .sv-paused-indicator{display:none!important;opacity:0!important}
 .sv.paused .sv-paused-indicator{display:none!important;opacity:0!important}
 /* Congela a barra de progresso quando pausado */
-.sv.paused .sv-fill{animation-play-state:paused!important;transition:none!important}
+.sv.paused .sv-fill{transition:none!important;width:var(--paused-w,0%)!important}
 .sv-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;-webkit-transform:translateZ(0)}
 .sv-body{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:80px 22px 150px;position:relative;z-index:2}
 .sv-em{font-size:72px}
@@ -5725,7 +5725,12 @@ window.openFlashModal=()=>{
     setTimeout(()=>goPage('vip'),1200);
     return;
   }
-  document.getElementById('flashModalOv').classList.add('open');
+  const modal=document.getElementById('flashModalOv');
+  if(!modal){showToast('❌ Erro: modal não encontrado.');return;}
+  modal.style.display='flex';
+  modal.style.alignItems='flex-end';
+  modal.style.zIndex='10100';
+  modal.classList.add('open');
   loadUserProductsForFlash();
   // Reset
   FLASH_SELECTED_STATUS=null;
@@ -6218,8 +6223,10 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
       const w=parseFloat(getComputedStyle(fill).width)||0;
       const pw=fill.parentElement?parseFloat(getComputedStyle(fill.parentElement).width)||window.innerWidth:window.innerWidth;
       _pausedFillW=pw>0?(w/pw*100):0;
+      // Para a transição CSS imediatamente travando na largura atual
       fill.style.transition='none';
       fill.style.width=_pausedFillW+'%';
+      fill.style.setProperty('--paused-w', _pausedFillW+'%');
     }
     clearTimeout(window.VT);
   }
