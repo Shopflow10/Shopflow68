@@ -6232,6 +6232,18 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     return pw>0?(w/pw*100):0;
   }
 
+  /* ─── DEBUG LOG VISUAL ─── */
+  const _dbgEl=document.createElement('div');
+  _dbgEl.style.cssText='position:fixed;top:60px;left:0;right:0;z-index:99999;pointer-events:none;padding:4px 8px;font-size:10px;font-family:monospace;max-height:180px;overflow:hidden;';
+  document.body.appendChild(_dbgEl);
+  function _log(msg){
+    const d=document.createElement('div');
+    d.style.cssText='background:rgba(0,0,0,0.9);color:#0f0;padding:2px 5px;margin-bottom:1px;border-radius:3px;white-space:nowrap;overflow:hidden;';
+    d.textContent=(Date.now()%10000)+' '+msg;
+    _dbgEl.appendChild(d);
+    if(_dbgEl.children.length>12)_dbgEl.removeChild(_dbgEl.children[0]);
+  }
+
   /* ─── PAUSE: congela vídeo + barra, cancela timeout ─── */
   function _pause(){
     if(_isPaused||!sv.classList.contains('open'))return;
@@ -6255,10 +6267,13 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
       fill.style.width=_pausedFillW+'%';
     }
     clearTimeout(window.VT);
+    const _vid2=document.getElementById('svVideo');
+    _log('PAUSE fill='+_pausedFillW.toFixed(1)+'% ct='+(_vid2?_vid2.currentTime.toFixed(2):'?')+' dur='+(_vid2&&_vid2.duration?_vid2.duration.toFixed(2):'?'));
   }
 
   /* ─── RESUME: retoma vídeo do ponto exato + recalcula barra ─── */
   function _resume(){
+    _log('RESUME called isPaused='+_isPaused);
     if(!_isPaused)return;
     _isPaused=false;
     sv.classList.remove('paused');
@@ -6297,13 +6312,17 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
 
       // Play — tenta direto, se falhar muta e tenta de novo
       vid._sfOnendedBlocked=false;
+      _log('PLAY ct='+vid.currentTime.toFixed(2)+' saved='+savedTime.toFixed(2)+' rem='+remSec.toFixed(1)+'s pct='+realPct.toFixed(1)+'%');
       const tryPlay=()=>{
         const p=vid.play();
         if(p!==undefined){
-          p.catch(()=>{
+          p.then(()=>_log('play OK')).catch((err)=>{
+            _log('play ERR:'+err.name+' muting...');
             vid.muted=true;
-            vid.play().catch(()=>{});
+            vid.play().then(()=>_log('play muted OK')).catch((e2)=>_log('play muted ERR:'+e2.name));
           });
+        }else{
+          _log('play no-promise');
         }
       };
       tryPlay();
@@ -6334,6 +6353,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
   sv.addEventListener('touchstart',e=>{
     if(e.touches.length!==1)return;
     _blocked=_isInteractive(e.target);
+    _log('tstart blocked='+_blocked);
     if(_blocked)return;
     _startX=e.touches[0].clientX;
     _startY=e.touches[0].clientY;
@@ -6341,7 +6361,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     _moved=false;
     _isHolding=false;
     _holdTimer=setTimeout(()=>{
-      if(!_moved){_isHolding=true;_pause();}
+      if(!_moved){_isHolding=true;_log('HOLD triggered');_pause();}
     },HOLD_MS);
   },{passive:true});
 
@@ -6358,6 +6378,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
 
   sv.addEventListener('touchend',e=>{
     clearTimeout(_holdTimer);
+    _log('tend holding='+_isHolding+' paused='+_isPaused+' blocked='+_blocked);
     if(_blocked){_blocked=false;return;}
 
     // Estava segurando OU estava pausado: só retoma, não navega
@@ -6395,6 +6416,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
 
   sv.addEventListener('touchcancel',()=>{
     clearTimeout(_holdTimer);
+    _log('tcancel isPaused='+_isPaused);
     _blocked=false;
     _isHolding=false;
     _moved=false;
@@ -6416,6 +6438,53 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
   window._svPause=_pause;
   window._svResume=_resume;
   window._svIsPaused=()=>_isPaused;
+
+  /* ─── DEBUG LOG VISUAL (remover depois) ─── */
+  const _dbg=document.createElement('div');
+  _dbg.id='_svDbg';
+  _dbg.style.cssText='position:fixed;bottom:120px;left:0;right:0;z-index:99999;pointer-events:none;padding:0 8px;font-size:11px;font-family:monospace;';
+  document.body.appendChild(_dbg);
+  function _log(msg){
+    const line=document.createElement('div');
+    line.style.cssText='background:rgba(0,0,0,0.85);color:#0f0;padding:3px 6px;margin-bottom:2px;border-radius:4px;';
+    line.textContent=Date.now()%100000+' '+msg;
+    _dbg.appendChild(line);
+    if(_dbg.children.length>8)_dbg.removeChild(_dbg.children[0]);
+  }
+
+  const _origPause=_pause;
+  const _origResume=_resume;
+
+  // Sobrescreve _pause para logar
+  sv.__pauseDbg=function(){
+    const vid=document.getElementById('svVideo');
+    const ct=vid?vid.currentTime.toFixed(2):'N/A';
+    const dur=vid?vid.duration:'N/A';
+    const idx=window.SV_IDX||0;
+    const fill=document.getElementById('svFill'+idx);
+    const pw=fill&&fill.parentElement?parseFloat(getComputedStyle(fill.parentElement).width)||window.innerWidth:window.innerWidth;
+    const w=fill?parseFloat(getComputedStyle(fill).width)||0:0;
+    const cssPct=pw>0?(w/pw*100).toFixed(1):0;
+    _log('PAUSE ct='+ct+' dur='+dur+' css%='+cssPct);
+    _origPause();
+    _log('PAUSE done fillW='+_pausedFillW.toFixed(1)+'% vidT='+_pausedVidTime.toFixed(2));
+  };
+  sv.__resumeDbg=function(){
+    const vid=document.getElementById('svVideo');
+    const ct=vid?vid.currentTime.toFixed(2):'N/A';
+    _log('RESUME isPaused='+_isPaused+' ct='+ct+' savedT='+_pausedVidTime.toFixed(2)+' fill%='+_pausedFillW.toFixed(1));
+    _origResume();
+    _log('RESUME done');
+  };
+
+  // Intercepta os touch events para usar versão com log
+  sv.addEventListener('touchstart',()=>{_log('touchstart');},{passive:true});
+  sv.addEventListener('touchend',()=>{_log('touchend isPaused='+_isPaused+' isHolding='+_isHolding);},{passive:true});
+  sv.addEventListener('touchcancel',()=>{_log('touchcancel isPaused='+_isPaused);},{passive:true});
+
+  // Substitui chamadas de _pause/_resume nos listeners existentes
+  const _origHoldTimer=HOLD_MS;
+  window._dbgLog=_log;
 })();
 
 </script>
