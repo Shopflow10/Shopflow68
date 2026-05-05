@@ -1354,7 +1354,7 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
   border:1px solid rgba(239,68,68,.3);padding:1px 5px;border-radius:50px}
 
 /* Modal de criar oferta relâmpago */
-.flash-modal-ov{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.8);backdrop-filter:blur(8px)}
+.flash-modal-ov{display:none;position:fixed;inset:0;z-index:10100;background:rgba(0,0,0,.8);backdrop-filter:blur(8px)}
 .flash-modal-ov.open{display:flex;align-items:flex-end}
 .flash-sheet{background:var(--card);border-radius:24px 24px 0 0;padding:22px 20px 48px;
   width:100%;max-height:90vh;overflow-y:auto;animation:slideUp .3s ease}
@@ -3178,11 +3178,11 @@ function svRenderItem(){
   if(hasVideo){
     v.className='sv open';
     svVideo.src='';svVideo.load();
+    svVideo._sfOnendedBlocked=false;
     svVideo.src=item.video;
     svVideo.style.display='block';
     svBody.style.background='transparent';
     svVideo.muted=false;
-    svVideo.play().catch(()=>{svVideo.muted=true;svVideo.play().catch(()=>{});});
   }else{
     v.className='sv open '+(item.bg||'bg-5');
     svVideo.pause();svVideo.src='';svVideo.style.display='none';svBody.style.background='';
@@ -3321,6 +3321,8 @@ function svRenderItem(){
   if(hasVideo){
     svVideo.onloadedmetadata=()=>{
       dur=Math.round(svVideo.duration*1000)||30000;
+      // Inicia play somente agora que temos a duração real
+      svVideo.play().catch(()=>{svVideo.muted=true;svVideo.play().catch(()=>{});});
       if(fill){fill.style.transition='none';fill.style.width='0%';setTimeout(()=>{fill.style.transition=`width ${dur/1000}s linear`;fill.style.width='100%';},50);}
       clearTimeout(VT);VT=setTimeout(()=>svNavNext(),dur+200);
     };
@@ -5720,7 +5722,7 @@ window.openFlashModal=()=>{
   if(!CU){showToast('⚠️ Faça login para criar ofertas relâmpago!');return;}
   if(!(UD?.vip||UD?.isAdmin)){
     showToast('👑 Exclusivo VIP! Assine para criar Ofertas Relâmpago.');
-    setTimeout(()=>showPage('vip'),1200);
+    setTimeout(()=>goPage('vip'),1200);
     return;
   }
   document.getElementById('flashModalOv').classList.add('open');
