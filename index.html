@@ -5966,5 +5966,32 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
   window._svIsPaused=()=>_isPaused;
 })();
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  let hold = false;
+  let currentVideo = null;
+
+  document.addEventListener('touchstart',e=>{
+    const vid = document.querySelector('.sv video');
+    if(vid){
+      hold = true;
+      currentVideo = vid;
+      vid.pause();
+      vid.dataset.pausedTime = vid.currentTime;
+    }
+  });
+
+  document.addEventListener('touchend',e=>{
+    if(currentVideo){
+      const t = parseFloat(currentVideo.dataset.pausedTime || 0);
+      currentVideo.currentTime = t;
+      currentVideo.play();
+      hold = false;
+    }
+  });
+});
+</script>
+
 </body>
 </html>
