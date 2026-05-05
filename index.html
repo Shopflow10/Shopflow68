@@ -6234,8 +6234,8 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
 
   /* ─── DEBUG LOG VISUAL ─── */
   const _dbgEl=document.createElement('div');
-  _dbgEl.style.cssText='position:fixed;top:60px;left:0;right:0;z-index:99999;pointer-events:none;padding:4px 8px;font-size:10px;font-family:monospace;max-height:180px;overflow:hidden;';
-  document.body.appendChild(_dbgEl);
+  _dbgEl.style.cssText='position:fixed;top:60px;left:0;right:0;z-index:2147483647;pointer-events:none;padding:4px 8px;font-size:10px;font-family:monospace;max-height:180px;overflow:hidden;';
+  (document.getElementById('sv')||document.body).appendChild(_dbgEl);
   function _log(msg){
     const d=document.createElement('div');
     d.style.cssText='background:rgba(0,0,0,0.9);color:#0f0;padding:2px 5px;margin-bottom:1px;border-radius:3px;white-space:nowrap;overflow:hidden;';
