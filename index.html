@@ -1863,7 +1863,7 @@ window._hardLoadingTimeout=setTimeout(function(){
             <div class="pm-quick-icon">👑</div>
             <div class="pm-quick-label">Plano<br>VIP</div>
           </div>
-          <div class="pm-quick-btn flash-btn" onclick="openFlashModal()">
+          <div class="pm-quick-btn flash-btn" onclick="window.openFlashModal()">
             <div class="pm-quick-icon">⚡</div>
             <div class="pm-quick-label">Oferta<br>Relâmpago</div>
           </div>
@@ -4412,7 +4412,7 @@ function renderVipPage(){
     </div>
     <!-- Oferta Relâmpago -->
     <div style="padding:0 0 4px">
-      <button class="flash-create-btn" onclick="openFlashModal()">
+      <button class="flash-create-btn" onclick="window.openFlashModal()">
         <div class="flash-create-icon">⚡</div>
         <div class="flash-create-info">
           <div class="flash-create-t">Criar Oferta Relâmpago</div>
@@ -5740,7 +5740,14 @@ window.openFlashModal=()=>{
   document.querySelectorAll('.flash-dur-btn').forEach((b,i)=>{b.classList.toggle('active',i===0);});
   FLASH_DUR_MIN=30;
 };
-window.closeFlashModal=()=>document.getElementById('flashModalOv').classList.remove('open');
+window.closeFlashModal=()=>{
+  const m=document.getElementById('flashModalOv');
+  if(!m)return;
+  m.classList.remove('open');
+  m.style.display='';
+  m.style.zIndex='';
+  m.style.alignItems='';
+};
 
 /* ── Carrega produtos ativos do usuário ── */
 async function loadUserProductsForFlash(){
@@ -6256,27 +6263,25 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
 
       // Restaura posição e faz play
       vid.currentTime=safeTargetTime;
-      vid.play().catch(()=>{});
 
-      // Só desbloqueia onended APÓS um frame (garante que o currentTime já foi aplicado)
-      requestAnimationFrame(()=>{
-        requestAnimationFrame(()=>{
-          vid._sfOnendedBlocked=false;
-        });
-      });
+      // Aguarda o currentTime ser aplicado antes de dar play (necessário no Android WebView)
+      setTimeout(()=>{
+        vid.play().catch(()=>{vid.muted=true;vid.play().catch(()=>{});});
+        vid._sfOnendedBlocked=false;
 
-      // Recalcula barra de progresso a partir do ponto retomado
-      const fill=document.getElementById('svFill'+idx);
-      if(fill){
-        fill.style.transition='none';
-        fill.style.width=_pausedFillW+'%';
-        requestAnimationFrame(()=>{
-          fill.style.transition=`width ${remSec}s linear`;
-          fill.style.width='100%';
-        });
-      }
-      clearTimeout(window.VT);
-      window.VT=setTimeout(()=>window.svNavNext&&window.svNavNext(),(remSec*1000)+300);
+        // Recalcula barra de progresso a partir do ponto retomado
+        const fill=document.getElementById('svFill'+idx);
+        if(fill){
+          fill.style.transition='none';
+          fill.style.width=_pausedFillW+'%';
+          requestAnimationFrame(()=>{
+            fill.style.transition=`width ${remSec}s linear`;
+            fill.style.width='100%';
+          });
+        }
+        clearTimeout(window.VT);
+        window.VT=setTimeout(()=>window.svNavNext&&window.svNavNext(),(remSec*1000)+300);
+      },80);
     }else{
       // Imagem: retoma pelo % restante da barra
       const base=8000;
