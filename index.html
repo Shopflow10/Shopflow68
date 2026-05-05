@@ -3318,6 +3318,7 @@ function svRenderItem(){
   const progEl=document.getElementById('svProg');  progEl.innerHTML=SV_ITEMS.map((_,i)=>`<div class="sv-bar"><div class="sv-fill" id="svFill${i}" style="width:${i<SV_IDX?'100%':'0%'}"></div></div>`).join('');
   const fill=document.getElementById('svFill'+SV_IDX);
   let dur=hasVideo?30000:8000;
+  window._svItemStartTime=null; // reset
   if(hasVideo){
     svVideo.onloadedmetadata=()=>{
       dur=Math.round(svVideo.duration*1000)||30000;
@@ -3332,6 +3333,7 @@ function svRenderItem(){
       clearTimeout(VT);svNavNext();
     };
   }else{
+    window._svItemStartTime=Date.now();
     if(fill){fill.style.transition='none';fill.style.width='0%';setTimeout(()=>{fill.style.transition=`width ${dur/1000}s linear`;fill.style.width='100%';},50);}
     clearTimeout(VT);VT=setTimeout(()=>svNavNext(),dur+400);
   }
@@ -6207,6 +6209,32 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
 
   const HOLD_MS=220;
 
+  /* ─── Calcula % real da barra interpolando pelo tempo decorrido ─── */
+  function _computeFillPct(fill){
+    // Tenta primeiro pelo computed style (quando a transição CSS já está rodando)
+    const pw=fill.parentElement?parseFloat(getComputedStyle(fill.parentElement).width)||window.innerWidth:window.innerWidth;
+    const w=parseFloat(getComputedStyle(fill).width)||0;
+    const cssPct=pw>0?(w/pw*100):0;
+
+    // Se a transição já começou e retornou um valor razoável, usa ele
+    if(cssPct>0.5)return cssPct;
+
+    // Fallback: calcula pelo currentTime do vídeo (mais confiável no Android WebView)
+    const vid=document.getElementById('svVideo');
+    if(vid&&vid.src&&!isNaN(vid.duration)&&vid.duration>0){
+      return Math.min(100,(vid.currentTime/vid.duration)*100);
+    }
+
+    // Fallback para imagem: calcula pelo tempo decorrido desde o início do item
+    if(window._svItemStartTime){
+      const elapsed=Date.now()-window._svItemStartTime;
+      const total=8000; // duração padrão imagem
+      return Math.min(100,(elapsed/total)*100);
+    }
+
+    return cssPct;
+  }
+
   /* ─── PAUSE: congela vídeo + barra, cancela timeout ─── */
   function _pause(){
     if(_isPaused||!sv.classList.contains('open'))return;
@@ -6216,24 +6244,18 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     // Pausa o vídeo e salva o ponto exato ANTES de pausar
     const vid=document.getElementById('svVideo');
     if(vid&&vid.src){
-      // Salva currentTime agora (antes de qualquer modificação)
       _pausedVidTime=vid.currentTime;
-      // Bloqueia onended imediatamente para evitar que dispare durante o pause
       vid._sfOnendedBlocked=true;
       if(!vid.paused){vid.pause();}
     }
 
-    // Congela a barra de progresso capturando o tamanho atual computado
+    // Congela a barra de progresso capturando o ponto real atual
     const idx=window.SV_IDX||0;
     const fill=document.getElementById('svFill'+idx);
     if(fill){
-      const w=parseFloat(getComputedStyle(fill).width)||0;
-      const pw=fill.parentElement?parseFloat(getComputedStyle(fill.parentElement).width)||window.innerWidth:window.innerWidth;
-      _pausedFillW=pw>0?(w/pw*100):0;
-      // Para a transição CSS imediatamente travando na largura atual
+      _pausedFillW=_computeFillPct(fill);
       fill.style.transition='none';
       fill.style.width=_pausedFillW+'%';
-      fill.style.setProperty('--paused-w', _pausedFillW+'%');
     }
     clearTimeout(window.VT);
   }
@@ -6251,18 +6273,16 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     if(vid&&vid.src&&item&&item.video){
       vid._sfOnendedBlocked=true;
 
-      // Recalcula tempo restante pelo duration real do vídeo
       const dur=(vid.duration&&!isNaN(vid.duration)&&vid.duration>0)?vid.duration:30;
-      // Usa o currentTime atual do vídeo (não altera — evita bloqueio do WebView)
+      // Usa o currentTime salvo no pause (mais confiável que vid.currentTime após resume)
       const currentPos=(_pausedVidTime>0&&!isNaN(_pausedVidTime))?_pausedVidTime:vid.currentTime;
       const remSec=Math.max(0.3, dur-currentPos);
+      // Recalcula % da barra com base no currentTime real (evita discrepância)
+      const realPct=Math.min(100,(currentPos/dur)*100);
 
-      // Play direto sem alterar currentTime (Android WebView aceita assim)
       const playPromise=vid.play();
       if(playPromise!==undefined){
-        playPromise.then(()=>{
-          vid._sfOnendedBlocked=false;
-        }).catch(()=>{
+        playPromise.then(()=>{vid._sfOnendedBlocked=false;}).catch(()=>{
           vid.muted=true;
           vid.play().then(()=>{vid._sfOnendedBlocked=false;}).catch(()=>{});
         });
@@ -6270,11 +6290,11 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
         vid._sfOnendedBlocked=false;
       }
 
-      // Recalcula barra de progresso a partir do ponto atual
+      // Retoma barra exatamente do ponto do vídeo
       const fill=document.getElementById('svFill'+idx);
       if(fill){
         fill.style.transition='none';
-        fill.style.width=_pausedFillW+'%';
+        fill.style.width=realPct+'%';
         requestAnimationFrame(()=>{
           requestAnimationFrame(()=>{
             fill.style.transition=`width ${remSec}s linear`;
@@ -6285,16 +6305,19 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
       clearTimeout(window.VT);
       window.VT=setTimeout(()=>window.svNavNext&&window.svNavNext(),(remSec*1000)+300);
     }else{
-      // Imagem: retoma pelo % restante da barra
+      // Imagem: usa o % calculado no pause e o tempo decorrido para calcular restante
+      const frozenPct=_pausedFillW;
       const base=8000;
-      const rem=Math.max(300,base*((100-_pausedFillW)/100));
+      const rem=Math.max(300,base*((100-frozenPct)/100));
       const fill=document.getElementById('svFill'+idx);
       if(fill){
         fill.style.transition='none';
-        fill.style.width=_pausedFillW+'%';
+        fill.style.width=frozenPct+'%';
         requestAnimationFrame(()=>{
-          fill.style.transition=`width ${rem/1000}s linear`;
-          fill.style.width='100%';
+          requestAnimationFrame(()=>{
+            fill.style.transition=`width ${rem/1000}s linear`;
+            fill.style.width='100%';
+          });
         });
       }
       clearTimeout(window.VT);
