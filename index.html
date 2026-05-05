@@ -5864,6 +5864,7 @@ setTimeout(startFlashBannerTimer,2000);
   const sv=document.getElementById('sv');
   if(!sv)return;
 
+  // Elementos que NÃO pausam nem navegam
   const INTERACTIVE_SEL=[
     '.sv-react-btn','.sv-comment-btn','.sv-views-btn',
     '.sv-x','.sv-delete-btn',
@@ -5877,151 +5878,130 @@ setTimeout(startFlashBannerTimer,2000);
     '.notif-toast',
   ].join(',');
 
-  function _isInteractive(target){
-    return !!target.closest(INTERACTIVE_SEL);
-  }
+  function _isInteractive(t){ return !!t.closest(INTERACTIVE_SEL); }
 
-  let _pauseTimer=null;
   let _isPaused=false;
   let _pausedFillW=0;
-  let _touchStartX=0,_touchStartY=0;
-  let _touchStartTime=0;
-  let _isSwiping=false;
-  let _touchBlocked=false;
-  let _holdFired=false;
+  let _holdTimer=null;
+  let _isHolding=false;
+  let _startX=0,_startY=0,_startT=0;
+  let _moved=false;
+  let _blocked=false;
 
-  const HOLD_MS=350;
-  const SWIPE_THRESHOLD=10;
+  const HOLD_MS=250;
 
-  function _pauseViewer(){
+  function _pause(){
     if(_isPaused||!sv.classList.contains('open'))return;
     _isPaused=true;
-    _holdFired=true;
-    sv.classList.add('paused');
     const vid=document.getElementById('svVideo');
     if(vid&&!vid.paused)vid.pause();
     const idx=window.SV_IDX||0;
     const fill=document.getElementById('svFill'+idx);
     if(fill){
-      const computed=parseFloat(getComputedStyle(fill).width);
-      const total=fill.parentElement?parseFloat(getComputedStyle(fill.parentElement).width):window.innerWidth;
-      _pausedFillW=total>0?(computed/total*100):0;
+      const w=parseFloat(getComputedStyle(fill).width);
+      const pw=fill.parentElement?parseFloat(getComputedStyle(fill.parentElement).width):window.innerWidth;
+      _pausedFillW=pw>0?(w/pw*100):0;
       fill.style.transition='none';
       fill.style.width=_pausedFillW+'%';
     }
     clearTimeout(window.VT);
   }
 
-  function _resumeViewer(){
+  function _resume(){
     if(!_isPaused)return;
     _isPaused=false;
-    sv.classList.remove('paused');
     const vid=document.getElementById('svVideo');
     if(vid&&vid.paused&&vid.src)vid.play().catch(()=>{});
     const idx=window.SV_IDX||0;
     const fill=document.getElementById('svFill'+idx);
     const item=window.SV_ITEMS?window.SV_ITEMS[idx]:null;
     if(fill){
-      const baseDur=item?.video?30000:8000;
-      const remFraction=(100-_pausedFillW)/100;
-      const remDur=Math.max(200,baseDur*remFraction);
-      fill.style.transition=`width ${remDur/1000}s linear`;
+      const base=item?.video?30000:8000;
+      const rem=Math.max(200,base*((100-_pausedFillW)/100));
+      fill.style.transition=`width ${rem/1000}s linear`;
       fill.style.width='100%';
       clearTimeout(window.VT);
-      window.VT=setTimeout(()=>window.svNavNext&&window.svNavNext(),remDur+200);
+      window.VT=setTimeout(()=>window.svNavNext&&window.svNavNext(),rem+200);
     }
   }
 
   sv.addEventListener('touchstart',e=>{
     if(e.touches.length!==1)return;
-    _touchBlocked=_isInteractive(e.target);
-    if(_touchBlocked)return;
-
-    _touchStartX=e.touches[0].clientX;
-    _touchStartY=e.touches[0].clientY;
-    _touchStartTime=Date.now();
-    _isSwiping=false;
-    _holdFired=false;
-
-    _pauseTimer=setTimeout(()=>{
-      if(!_isSwiping&&!_touchBlocked)_pauseViewer();
+    _blocked=_isInteractive(e.target);
+    if(_blocked)return;
+    _startX=e.touches[0].clientX;
+    _startY=e.touches[0].clientY;
+    _startT=Date.now();
+    _moved=false;
+    _isHolding=false;
+    _holdTimer=setTimeout(()=>{
+      if(!_moved){
+        _isHolding=true;
+        _pause();
+      }
     },HOLD_MS);
   },{passive:true});
 
   sv.addEventListener('touchmove',e=>{
-    if(_touchBlocked||e.touches.length!==1)return;
-    const dx=e.touches[0].clientX-_touchStartX;
-    const dy=e.touches[0].clientY-_touchStartY;
-    if(Math.abs(dx)>SWIPE_THRESHOLD||Math.abs(dy)>SWIPE_THRESHOLD){
-      if(!_isSwiping){
-        _isSwiping=true;
-        clearTimeout(_pauseTimer);
-        if(_isPaused)_resumeViewer();
-      }
+    if(_blocked||e.touches.length!==1)return;
+    const dx=e.touches[0].clientX-_startX;
+    const dy=e.touches[0].clientY-_startY;
+    if(Math.abs(dx)>8||Math.abs(dy)>8){
+      _moved=true;
+      clearTimeout(_holdTimer);
+      if(_isPaused)_resume();
     }
   },{passive:true});
 
   sv.addEventListener('touchend',e=>{
-    if(_touchBlocked){
-      clearTimeout(_pauseTimer);
-      _touchBlocked=false;
+    clearTimeout(_holdTimer);
+    if(_blocked){_blocked=false;return;}
+
+    // Estava segurando — só retoma, não navega
+    if(_isHolding||_isPaused){
+      _resume();
+      _isHolding=false;
       return;
     }
 
-    clearTimeout(_pauseTimer);
-    const touch=e.changedTouches[0];
-    const dx=touch.clientX-_touchStartX;
-    const dy=touch.clientY-_touchStartY;
-    const dt=Date.now()-_touchStartTime;
-
-    if(_isPaused){
-      _resumeViewer();
-      return; // só retoma, não navega
-    }
-
-    // Se foi hold mas não pausou ainda (raro), ignora navegação
-    if(_holdFired)return;
+    const t=e.changedTouches[0];
+    const dx=t.clientX-_startX;
+    const dy=t.clientY-_startY;
+    const dt=Date.now()-_startT;
 
     // Swipe horizontal
-    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.2){
-      if(dx<0){window.svNavNext&&window.svNavNext();}
-      else{window.svNavPrev&&window.svNavPrev();}
+    if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.2){
+      dx<0?window.svNavNext&&window.svNavNext():window.svNavPrev&&window.svNavPrev();
       return;
     }
 
     // Tap rápido — navega
-    if(!_isSwiping&&dt<350){
-      const elAtEnd=document.elementFromPoint(touch.clientX,touch.clientY);
-      if(elAtEnd&&_isInteractive(elAtEnd))return;
-
-      if(touch.clientX<window.innerWidth*0.36){
-        window.svNavPrev&&window.svNavPrev();
-      }else if(touch.clientX>window.innerWidth*0.64){
-        window.svNavNext&&window.svNavNext();
-      }
+    if(!_moved&&dt<300){
+      const el=document.elementFromPoint(t.clientX,t.clientY);
+      if(el&&_isInteractive(el))return;
+      if(t.clientX<window.innerWidth*0.36)window.svNavPrev&&window.svNavPrev();
+      else if(t.clientX>window.innerWidth*0.64)window.svNavNext&&window.svNavNext();
     }
   },{passive:true});
 
   sv.addEventListener('touchcancel',()=>{
-    clearTimeout(_pauseTimer);
-    _touchBlocked=false;
-    _holdFired=false;
-    if(_isPaused)_resumeViewer();
+    clearTimeout(_holdTimer);
+    _blocked=false;
+    _isHolding=false;
+    if(_isPaused)_resume();
   },{passive:true});
 
-  // Mouse (desktop fallback)
   sv.addEventListener('mousedown',e=>{
     if(_isInteractive(e.target))return;
-    _holdFired=false;
-    _pauseTimer=setTimeout(()=>_pauseViewer(),HOLD_MS);
+    _holdTimer=setTimeout(()=>_pause(),HOLD_MS);
   });
   document.addEventListener('mouseup',()=>{
-    clearTimeout(_pauseTimer);
-    if(_isPaused)_resumeViewer();
+    clearTimeout(_holdTimer);
+    if(_isPaused)_resume();
   });
 
-  window._svPause=_pauseViewer;
-  window._svResume=_resumeViewer;
+  window._svPause=_pause;
+  window._svResume=_resume;
   window._svIsPaused=()=>_isPaused;
 })();
 
