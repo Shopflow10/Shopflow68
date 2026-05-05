@@ -6090,3 +6090,27 @@ document.addEventListener('DOMContentLoaded', ()=>{
   viewer.addEventListener('mouseup', resumeStory);
 });
 </script>
+
+<style>
+/* ===== FIX VIDEO SIZE ===== */
+#svVideo{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  background:black;
+}
+</style>
+
+<script>
+// garante ajuste correto após metadata
+document.addEventListener('DOMContentLoaded', ()=>{
+  const video = document.getElementById('svVideo');
+  if(!video) return;
+
+  video.addEventListener('loadedmetadata', ()=>{
+    // força repaint correto
+    video.style.opacity = '0.99';
+    setTimeout(()=> video.style.opacity = '1', 50);
+  });
+});
+</script>
