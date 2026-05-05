@@ -1081,7 +1081,7 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 .vm-today{font-size:10px;color:var(--muted2);margin-top:1px}
 
 /* Botão CTA grande no viewer */
-.sv-cta-big{position:fixed;bottom:86px;left:16px;right:16px;z-index:9999;
+.sv-cta-big{position:fixed;bottom:160px;left:16px;right:16px;z-index:9999;
   border-radius:50px;border:none;font-family:'Inter',sans-serif;font-weight:900;
   font-size:15px;cursor:pointer;padding:15px;text-align:center;
   box-shadow:0 6px 24px rgba(0,0,0,.4);animation:pulsebtn 2s infinite;
@@ -5894,7 +5894,7 @@ setTimeout(startFlashBannerTimer,2000);
   let _isSwiping=false;
   let _touchBlocked=false; // flag: toque iniciou em elemento interativo
 
-  const HOLD_MS=400;
+  const HOLD_MS=300;
 
   function _pauseViewer(){
     if(_isPaused||!sv.classList.contains('open'))return;
@@ -5950,7 +5950,7 @@ setTimeout(startFlashBannerTimer,2000);
     _pauseTimer=setTimeout(()=>{
       if(!_isSwiping&&!_touchBlocked)_pauseViewer();
     },HOLD_MS);
-  },{passive:true});
+  },{passive:false});
 
   sv.addEventListener('touchmove',e=>{
     if(_touchBlocked||e.touches.length!==1)return;
