@@ -633,8 +633,8 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 .sv-btn{display:flex;align-items:center;justify-content:center;gap:6px;position:fixed;bottom:170px;left:50%;transform:translateX(-50%);z-index:310;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:13px;font-weight:700;padding:12px 22px;border-radius:50px;text-decoration:none;box-shadow:0 4px 20px rgba(124,58,237,.5);font-family:'Inter',sans-serif;white-space:nowrap;animation:pulsebtn 2s infinite}
 .sv-btn:active{opacity:.8}
 .sv-hint{font-size:10px;color:rgba(255,255,255,.5);position:fixed;bottom:154px;left:50%;transform:translateX(-50%);z-index:9999;white-space:nowrap;text-align:center;-webkit-transform:translateX(-50%) translateZ(0);transform:translateX(-50%) translateZ(0)}
-/* Barra inferior de ações — coluna: CTA em cima, botões embaixo */
-.sv-actions{position:fixed;bottom:0;left:0;right:0;z-index:9998;
+/* Barra inferior de ações — contém apenas o CTA (WhatsApp/Comprar) */
+.sv-actions{position:fixed;bottom:0;left:0;right:0;z-index:9997;
   background:linear-gradient(to top,rgba(0,0,0,.98) 0%,rgba(0,0,0,.8) 60%,transparent 100%);
   padding:10px 14px 28px;display:flex;flex-direction:column;gap:8px}
 /* Botão CTA dentro da barra */
@@ -647,8 +647,12 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 .sv-cta-inner.sv-cta-wpp{background:linear-gradient(135deg,var(--wpp),var(--wpp2));color:#fff}
 .sv-cta-inner.sv-cta-buy{background:linear-gradient(135deg,#e91e8c,#9c27b0);color:#fff}
 .sv-cta-inner.sv-cta-link{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
-/* Linha dos botões Reagir + Views */
+/* Linha dos botões — agora vazia, mantida por compatibilidade */
 .sv-actions-row{display:flex;align-items:center;gap:8px}
+/* Botão de reação — lateral */
+.sv-react-btn{display:none}
+/* Botão de views — lateral */
+.sv-views-btn{display:none}
 .sv-like-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,.2);border-radius:50px;padding:10px 20px;color:#fff;font-size:15px;font-family:'Inter',sans-serif;font-weight:700;cursor:pointer;transition:all .2s;flex-shrink:0}
 .sv-like-btn:active{transform:scale(.93)}
 .sv-like-btn.liked{border-color:rgba(239,68,68,.7);background:rgba(239,68,68,.18)}
@@ -675,28 +679,9 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 
 /* ═══ SISTEMA DE REAÇÕES ═══ */
 /* Barra de ações do viewer */
-.sv-actions{position:fixed;bottom:0;left:0;right:0;z-index:9998;
-  background:linear-gradient(to top,rgba(0,0,0,.98) 0%,rgba(0,0,0,.8) 60%,transparent 100%);
-  padding:10px 14px 28px;display:flex;flex-direction:column;gap:8px}
-/* Botão de reação */
-.sv-react-btn{position:relative;display:flex;align-items:center;gap:7px;
-  background:rgba(255,255,255,.1);backdrop-filter:blur(12px);
-  border:1.5px solid rgba(255,255,255,.2);border-radius:50px;
-  padding:10px 16px;color:#fff;font-size:15px;
-  font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;cursor:pointer;
-  transition:all .2s;flex-shrink:0}
-.sv-react-btn:active{transform:scale(.93)}
-.sv-react-btn.reacted{border-color:rgba(255,184,0,.8);background:rgba(255,184,0,.2)}
-/* Botão de views */
-.sv-views-btn{display:flex;align-items:center;gap:8px;flex:1;
-  background:rgba(255,255,255,.08);backdrop-filter:blur(10px);
-  border:1.5px solid rgba(255,255,255,.15);border-radius:50px;
-  padding:10px 16px;color:rgba(255,255,255,.85);font-size:13px;
-  font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;cursor:pointer;
-  transition:all .2s;justify-content:center}
-.sv-views-btn:active{opacity:.7}
 /* Picker de reações */
-.sv-reaction-picker{display:none;position:fixed;bottom:82px;left:14px;right:14px;z-index:9999;
+.sv-reaction-picker{display:none;position:fixed;right:70px;top:50%;transform:translateY(-60%);
+  width:220px;z-index:9999;
   background:rgba(20,20,35,.97);backdrop-filter:blur(24px);
   border:1px solid rgba(255,255,255,.12);border-radius:20px;
   padding:12px 10px 10px;
@@ -718,20 +703,6 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
   border-radius:50px;padding:0 4px;min-width:14px;height:14px;
   display:flex;align-items:center;justify-content:center;
   border:1.5px solid rgba(20,20,35,1)}
-/* Linha de reações rápidas acima da barra de ações */
-.sv-reactions-row{position:fixed;bottom:90px;left:0;right:0;z-index:9997;
-  display:flex;align-items:center;gap:6px;padding:0 14px;
-  pointer-events:none;opacity:0;transition:opacity .3s,bottom .3s}
-.sv-reactions-row.show{opacity:1;pointer-events:all}
-/* Quando o CTA está visível, sobe os chips acima dele */
-.sv-reactions-row.cta-visible{bottom:150px;}
-.sv-reaction-chip{display:flex;align-items:center;gap:4px;
-  background:rgba(255,255,255,.12);backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,.18);border-radius:50px;
-  padding:5px 10px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;
-  transition:all .15s}
-.sv-reaction-chip.mine{background:rgba(255,184,0,.22);border-color:rgba(255,184,0,.5);color:var(--gold)}
-.sv-reaction-chip:active{transform:scale(.92)}
 /* Painel quem viu / reações */
 .sv-info-ov{display:none;position:fixed;inset:0;z-index:390;background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
 .sv-info-ov.open{display:block}
@@ -1101,6 +1072,36 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 .vm-today{font-size:10px;color:var(--muted2);margin-top:1px}
 
 /* sv-cta-big — substituído por sv-cta-inner dentro da barra */
+
+/* ═══ BOTÕES LATERAIS DO VIEWER (reação + views) ═══ */
+/* Ficam no lado direito, centralizados verticalmente — não atrapalham o conteúdo */
+.sv-side-actions{
+  position:fixed;right:12px;top:50%;transform:translateY(-50%);
+  z-index:9998;display:none;flex-direction:column;align-items:center;gap:14px}
+.sv-side-actions.show{display:flex}
+.sv-side-btn{
+  width:52px;height:52px;border-radius:50%;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(16px);
+  border:1.5px solid rgba(255,255,255,.18);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  cursor:pointer;transition:all .2s;color:#fff;font-size:22px;flex-shrink:0}
+.sv-side-btn:active{transform:scale(.88)}
+.sv-side-btn.reacted{border-color:rgba(255,184,0,.9);background:rgba(255,184,0,.22);
+  box-shadow:0 0 16px rgba(255,184,0,.4)}
+.sv-side-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.8);
+  text-shadow:0 1px 4px rgba(0,0,0,.8);line-height:1}
+/* Chips de reação — agora no lado esquerdo, centralizados */
+.sv-reactions-row{position:fixed;left:12px;top:50%;transform:translateY(-50%);
+  z-index:9997;display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+  pointer-events:none;opacity:0;transition:opacity .3s}
+.sv-reactions-row.show{opacity:1;pointer-events:all}
+.sv-reaction-chip{display:flex;align-items:center;gap:4px;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.18);border-radius:50px;
+  padding:5px 10px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;
+  transition:all .15s}
+.sv-reaction-chip.mine{background:rgba(255,184,0,.22);border-color:rgba(255,184,0,.5);color:var(--gold)}
+.sv-reaction-chip:active{transform:scale(.92)}
 
 /* Múltiplas fotos — mini carrossel no editor */
 .multi-photos-wrap{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px;
@@ -1944,24 +1945,25 @@ window._hardLoadingTimeout=setTimeout(function(){
   <!-- Botão apagar meu status -->
   <button class="sv-delete-btn" id="svDeleteBtn" onclick="openManageSheet()">🗑️ Apagar produto</button>
 
-  <!-- Linha de reações rápidas (chips) -->
+  <!-- Chips de reação — lado ESQUERDO, centro vertical -->
   <div class="sv-reactions-row" id="svReactionsRow"></div>
 
-  <!-- Barra de ações inferior — layout em coluna: CTA em cima, botões embaixo -->
-  <div class="sv-actions" id="svActions" style="display:none">
-    <!-- Botão CTA WhatsApp/Comprar — fica aqui dentro, acima dos botões -->
-    <a class="sv-cta-inner" id="svCtaBig" href="#" onclick="location.href=this.href;return false;"></a>
-    <!-- Linha de botões Reagir + Visualizações -->
-    <div class="sv-actions-row">
-      <button class="sv-react-btn" id="svReactBtn" onclick="toggleReactionPicker()">
-        <span id="svMyReaction">😊</span>
-        <span id="svReactionCount" style="font-size:13px">Reagir</span>
-      </button>
-      <button class="sv-views-btn" id="svViewsBtn" onclick="openInfoPanel('views')">
-        <span>👁</span>
-        <span id="svViewsCount">0 visualizações</span>
-      </button>
+  <!-- Botões laterais DIREITA: Reagir + Visualizações -->
+  <div class="sv-side-actions" id="svSideActions">
+    <div class="sv-side-btn" id="svReactBtn" onclick="toggleReactionPicker()">
+      <span id="svMyReaction">😊</span>
+      <span class="sv-side-label" id="svReactionCount">Reagir</span>
     </div>
+    <div class="sv-side-btn" id="svViewsBtn" onclick="openInfoPanel('views')">
+      <span>👁</span>
+      <span class="sv-side-label" id="svViewsCount">0</span>
+    </div>
+  </div>
+
+  <!-- Barra inferior — apenas CTA (WhatsApp/Comprar) -->
+  <div class="sv-actions" id="svActions" style="display:none">
+    <a class="sv-cta-inner" id="svCtaBig" href="#" onclick="location.href=this.href;return false;"></a>
+    <div class="sv-actions-row"></div>
   </div>
 
   <!-- Picker de reações -->
@@ -3252,30 +3254,23 @@ function svRenderItem(){
   // Botão apagar — só aparece para o dono do status
   const delBtn=document.getElementById('svDeleteBtn');
   if(delBtn){delBtn.classList.toggle('show',SV_UID===CU?.uid);}
-  // Botão "Quem viu" para o dono — mostra barra de ações com views
+  // Botões laterais — sempre visíveis para todos (dono e visitante)
+  const sideAct=document.getElementById('svSideActions');
   const actBar=document.getElementById('svActions');
-  if(actBar&&SV_UID===CU?.uid){
-    // Dono: mostra barra com views + reações
-    actBar.style.display='flex';
-    const reactBtn=document.getElementById('svReactBtn');
-    if(reactBtn)reactBtn.style.display='none';
-    const viewsBtn=document.getElementById('svViewsBtn');
-    if(viewsBtn){viewsBtn.style.flex='1';viewsBtn.style.justifyContent='center';}
-    // Atualiza contadores dinamicamente
+  if(sideAct){
+    sideAct.classList.add('show');
     const viewsCount=document.getElementById('svViewsCount');
-    if(viewsCount){
-      Promise.all([
-        getDocs(collection(db,'views',SV_UID,'viewers')),
-        SV_ITEMS[SV_IDX]?getDocs(collection(db,'reactions',SV_UID+'_'+SV_ITEMS[SV_IDX].id,'reactors')):Promise.resolve({size:0})
-      ]).then(([vs,rs])=>{
-        if(viewsCount)viewsCount.textContent=vs.size+' views · '+rs.size+' reações';
+    if(SV_UID===CU?.uid&&viewsCount){
+      // Dono: mostra contagem real de views
+      getDocs(collection(db,'views',SV_UID,'viewers')).then(vs=>{
+        if(viewsCount)viewsCount.textContent=vs.size||'0';
       }).catch(()=>{});
     }
-  }else if(actBar){
-    const reactBtn=document.getElementById('svReactBtn');
-    if(reactBtn)reactBtn.style.display='';
-    const viewsBtn=document.getElementById('svViewsBtn');
-    if(viewsBtn){viewsBtn.style.flex='';viewsBtn.style.justifyContent='';}
+  }
+  if(actBar){
+    // Barra inferior: só aparece quando há CTA
+    const hasCTA=ctaBig.classList.contains('show');
+    actBar.style.display=hasCTA?'flex':'none';
   }
   // Progress bars
   const progEl=document.getElementById('svProg');  progEl.innerHTML=SV_ITEMS.map((_,i)=>`<div class="sv-bar"><div class="sv-fill" id="svFill${i}" style="width:${i<SV_IDX?'100%':'0%'}"></div></div>`).join('');
@@ -3378,6 +3373,8 @@ window.closeViewer=()=>{
   if(picker)picker.classList.remove('open');
   const actBar=document.getElementById('svActions');
   if(actBar)actBar.style.display='none';
+  const sideAct=document.getElementById('svSideActions');
+  if(sideAct)sideAct.classList.remove('show');
   const row=document.getElementById('svReactionsRow');
   if(row){row.classList.remove('show');row.innerHTML='';}
   closeInfoPanel();
@@ -4952,11 +4949,13 @@ function renderExplorePage(){
   }
 
   grid.innerHTML=filtered.map(p=>{
-    // ✅ FIX: usa multiPhotos (campo correto) em vez de photos
     const mainImg=p.multiPhotos&&p.multiPhotos.length
       ?`<img class="explore-card-img" src="${p.multiPhotos[0]}" alt="" loading="lazy">`
       :p.video
-        ?`<img class="explore-card-img" src="${p.video.replace('/upload/','/upload/so_0,w_300,h_300,c_fill,f_jpg/').replace(/\.[^.]+$/,'.jpg')}" alt="" loading="lazy" onerror="this.style.display='none'">`
+        ?`<div class="explore-card-img" style="position:relative;background:#000;display:flex;align-items:center;justify-content:center">
+            <img src="${p.video.replace('/upload/','/upload/so_0,w_300,h_300,c_fill,f_jpg/').replace(/\.[^.]+$/,'.jpg')}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" loading="lazy" onerror="this.style.display='none'">
+            <div style="position:relative;z-index:2;width:36px;height:36px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px">▶️</div>
+          </div>`
         :`<div class="explore-card-placeholder" style="font-size:42px">${p.emoji||'🛍️'}</div>`;
     const soldBadge=p.sold?`<div class="explore-card-sold"><div class="explore-card-sold-tape">VENDIDO</div></div>`:'';
     const vipBadge=p._uvip?`<div class="explore-card-vip-badge">✦ VIP</div>`:'';
@@ -4966,8 +4965,7 @@ function renderExplorePage(){
     const avHtml=p._uphoto
       ?`<div class="explore-card-av"><img src="${p._uphoto}" alt=""></div>`
       :`<div class="explore-card-av ${p._uclass}">${(p._uname||'?')[0]}</div>`;
-    // ✅ FIX: chama openViewer (função real que existe) em vez de viewUserStatus
-    return `<div class="explore-card${p._uvip?' is-vip':''}" onclick="openViewer('${p._uid}')" style="cursor:pointer">
+    return `<div class="explore-card${p._uvip?' is-vip':''}" onclick="openViewerAtStatus('${p._uid}','${p.id}')" style="cursor:pointer">
       <div class="explore-card-media-wrap">
         ${mainImg}
         ${soldBadge}
@@ -4992,6 +4990,25 @@ window.filterExploreByCategory=(cat,el)=>{
   document.querySelectorAll('.explore-cat').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
   renderExplorePage();
+};
+
+/* Abre o viewer direto em um status específico (usado na loja/explore) */
+window.openViewerAtStatus=(uid,statusId)=>{
+  const u=UC.find(x=>x.id===uid);
+  if(!u)return;
+  const items=svGetItems(u);
+  if(!items.length)return;
+  if(!window._SV_USER_LIST||!window._SV_USER_LIST.length){
+    const others=UC.filter(x=>x.id!==CU?.uid&&svGetItems(x).length>0);
+    window._SV_USER_LIST=[...others.filter(x=>x.vip),...others.filter(x=>!x.vip)];
+  }
+  SV_UID=uid;SV_ITEMS=items;
+  // Abre no índice do status específico
+  const idx=items.findIndex(s=>s.id===statusId);
+  SV_IDX=idx>=0?idx:0;
+  document.getElementById('sv').classList.add('open');
+  svRenderItem();
+  if(uid!==CU?.uid)countView(u);
 };
 
 /* ════════════════════════════════════════════
@@ -5185,9 +5202,15 @@ window.requestPushPermission=async()=>{
   }
 };
 
-function showLocalNotification(title,body){
+function showLocalNotification(title,body,url='/'){
   if(!('Notification' in window)||Notification.permission!=='granted')return;
-  try{new Notification(title,{body,icon:'/favicon.png'});}catch(e){}
+  try{
+    if(window._swReg&&window._swReg.showNotification){
+      window._swReg.showNotification(title,{body,icon:'/favicon.png',badge:'/favicon.png',data:url});
+    }else{
+      new Notification(title,{body,icon:'/favicon.png'});
+    }
+  }catch(e){console.warn('[Notif]',e);}
 }
 
 function notifyNewMessage(senderName){
@@ -5604,13 +5627,23 @@ window.createFlashSale=async()=>{
       flashDiscount:disc,
       flashEndsAt
     };
+    console.log('[Flash] Salvando oferta relâmpago:', statuses[idx]);
     await updateDoc(doc(db,'users',CU.uid),{statuses});
     showToast('⚡ Oferta relâmpago ativada por '+FLASH_DUR_MIN+(FLASH_DUR_MIN<60?' minutos!':(FLASH_DUR_MIN/60)+' hora(s)!'));
     closeFlashModal();
     // Atualiza explore imediatamente
     setTimeout(renderExplore,500);
     startFlashBannerTimer();
-  }catch(e){console.error(e);showToast('❌ Erro ao criar oferta.');}
+  }catch(e){
+    console.error('[Flash] Erro ao salvar oferta relâmpago:',e?.code,e?.message,e);
+    if(e?.code==='permission-denied'){
+      showToast('❌ Sem permissão no banco. Veja as regras do Firebase.');
+    }else if(e?.code==='not-found'){
+      showToast('❌ Usuário não encontrado no banco.');
+    }else{
+      showToast('❌ Erro: '+(e?.message||'Tente novamente.'));
+    }
+  }
 };
 
 /* ── Formata mm:ss ou hh:mm:ss ── */
@@ -5823,23 +5856,32 @@ setTimeout(startFlashBannerTimer,2000);
     });
   }
 
-  /* ── 7. LEMBRETE DE REGRAS FIRESTORE ───────────────────────── */
-  // IMPORTANTE: Configure no console Firebase (firestore.rules):
+  /* ── 7. REGRAS FIRESTORE — copie no console Firebase ───────────────────────── */
+  // Acesse: console.firebase.google.com → seu projeto → Firestore → Regras
   /*
     rules_version = '2';
     service cloud.firestore {
       match /databases/{database}/documents {
-        // Usuários só leem/editam o próprio perfil
+
+        // Usuários: qualquer autenticado lê, só o dono escreve
         match /users/{userId} {
           allow read: if request.auth != null;
           allow write: if request.auth != null && request.auth.uid == userId;
         }
+
+        // Views: qualquer autenticado pode registrar e ler visualizações
+        match /views/{ownerId}/viewers/{viewerId} {
+          allow read: if request.auth != null;
+          allow write: if request.auth != null;
+        }
+
         // Reviews: qualquer autenticado lê, só o autor escreve
         match /reviews/{sellerId}/items/{reviewerId} {
           allow read: if request.auth != null;
           allow write: if request.auth != null && request.auth.uid == reviewerId;
         }
-        // Chats: só os participantes
+
+        // Chats: só os participantes leem e escrevem
         match /chats/{chatId}/{document=**} {
           allow read, write: if request.auth != null &&
             (chatId.matches('.*' + request.auth.uid + '.*'));
@@ -5881,13 +5923,43 @@ setTimeout(startFlashBannerTimer,2000);
   obs.observe(cs,{attributes:true,attributeFilter:['class']});
 })();
 
-/* ── PAUSE + SWIPE no viewer (igual WhatsApp) ── */
+/* ── SERVICE WORKER para notificações push ── */
+(()=>{
+  if(!('serviceWorker' in navigator))return;
+  // Cria o SW inline via Blob
+  const swCode=`
+self.addEventListener('push',e=>{
+  const d=e.data?e.data.json():{};
+  self.registration.showNotification(d.title||'ShopFlow',{
+    body:d.body||'Você tem uma nova notificação',
+    icon:d.icon||'/favicon.png',
+    badge:'/favicon.png',
+    data:d.url||'/'
+  });
+});
+self.addEventListener('notificationclick',e=>{
+  e.notification.close();
+  e.waitUntil(clients.openWindow(e.notification.data||'/'));
+});
+self.addEventListener('install',()=>self.skipWaiting());
+self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
+`;
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  const swUrl=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl,{scope:'/'}).then(reg=>{
+    window._swReg=reg;
+    console.log('[SW] Registrado com sucesso');
+  }).catch(err=>console.warn('[SW] Falha ao registrar:',err));
+})();
+
+
 (()=>{
   const sv=document.getElementById('sv');
   if(!sv)return;
 
   // Elementos que NÃO pausam nem navegam
   const INTERACTIVE_SEL=[
+    '.sv-side-btn','.sv-side-actions',
     '.sv-react-btn','.sv-comment-btn','.sv-views-btn',
     '.sv-x','.sv-delete-btn',
     '.sv-rp-emoji','.sv-rs-chip','.sv-reaction-chip',
@@ -5915,6 +5987,7 @@ setTimeout(startFlashBannerTimer,2000);
   function _pause(){
     if(_isPaused||!sv.classList.contains('open'))return;
     _isPaused=true;
+    sv.classList.add('paused');
     const vid=document.getElementById('svVideo');
     if(vid&&!vid.paused)vid.pause();
     const idx=window.SV_IDX||0;
@@ -5932,6 +6005,7 @@ setTimeout(startFlashBannerTimer,2000);
   function _resume(){
     if(!_isPaused)return;
     _isPaused=false;
+    sv.classList.remove('paused');
     const vid=document.getElementById('svVideo');
     if(vid&&vid.paused&&vid.src)vid.play().catch(()=>{});
     const idx=window.SV_IDX||0;
