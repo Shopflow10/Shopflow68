@@ -367,6 +367,23 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 
 
 /* ── User status list (below cards) ── */
+
+/* -- Status VISTO -- */
+.ul-av.watched{border-color:rgba(255,255,255,0.18)!important;box-shadow:none!important;filter:saturate(0.3) brightness(0.75)}
+.ul-row.watched-row .ul-name{color:var(--muted2)}
+.ul-row.watched-row .ul-prev{opacity:.6}
+.sf-card.watched-card{opacity:.55;filter:saturate(0.25) brightness(0.8)}
+.sf-card.watched-card::after{content:'';position:absolute;top:6px;right:6px;z-index:10;
+  width:18px;height:18px;border-radius:50%;
+  background:linear-gradient(135deg,#22d3ee,#10b981) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%23fff' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/10px no-repeat;
+  border:2px solid var(--dark)}
+.ul-av-wrap .ul-watched-check{position:absolute;bottom:-2px;right:-2px;
+  width:16px;height:16px;border-radius:50%;
+  background:linear-gradient(135deg,#22d3ee,#10b981);
+  border:2px solid var(--dark);
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:900;color:#fff;line-height:1;z-index:5}
+
 .ul-row{display:flex;align-items:center;gap:12px;padding:12px 16px;
   cursor:pointer;position:relative;transition:background .15s;border-bottom:.5px solid var(--border)}
 .ul-row:active{background:rgba(255,255,255,.03)}
@@ -3016,6 +3033,13 @@ function renderMyBar(){
 /* ── STATUS FEED ── */
 const WPP_SVG='<svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52-.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>';
 
+
+/* === SISTEMA DE STATUS VISTO === */
+const WATCHED_KEY='sf_watched_v1';
+function _getWatched(){try{return new Set(JSON.parse(localStorage.getItem(WATCHED_KEY)||'[]'));}catch{return new Set();}}
+function _markWatched(uid){if(!uid||!CU||uid===CU.uid)return;const s=_getWatched();if(s.has(uid))return;s.add(uid);try{localStorage.setItem(WATCHED_KEY,JSON.stringify([...s]));}catch{}}
+function _isWatched(uid){return _getWatched().has(uid);}
+
 function renderStatusFeed(){
   if(!UD||!CU)return;
   // Garante que o UD está sincronizado no UC antes de filtrar
@@ -3041,7 +3065,10 @@ function renderStatusFeed(){
     if(sorted.length===0&&!myCard){
       cardsEl.innerHTML='<div class="chat-empty" style="padding:20px;width:100%;flex-shrink:0"><div class="chat-empty-icon">📭</div><strong>Nenhum status ativo</strong></div>';
     }else{
-      cardsEl.innerHTML=myCard+sorted.map(u=>statusCard(u)).join('');
+      const _notW=sorted.filter(u=>!_isWatched(u.id));
+      const _yesW=sorted.filter(u=>_isWatched(u.id));
+      const _cardsSorted=[..._notW,..._yesW];
+      cardsEl.innerHTML=myCard+_cardsSorted.map(u=>statusCard(u,false,_isWatched(u.id))).join('');
     }
   }
   // Salva a lista ordenada globalmente para navegação entre usuários no viewer
@@ -3073,7 +3100,10 @@ function renderStatusFeed(){
     }
 
     if(sorted.length===0){listEl.innerHTML=myRow;return;}
-    listEl.innerHTML=myRow+sorted.map(u=>{
+    const _listNW=sorted.filter(u=>!_isWatched(u.id));
+    const _listYW=sorted.filter(u=>_isWatched(u.id));
+    const _listSorted=[..._listNW,..._listYW];
+    listEl.innerHTML=myRow+_listSorted.map(u=>{
       const items=svGetItems(u);
       const first=items[0];
       const hasVideo=!!first?.hasVideo;
@@ -3090,7 +3120,7 @@ function renderStatusFeed(){
       const avInner=u.photoURL?'<img src="'+u.photoURL+'" alt="">':((u.name||'?')[0].toUpperCase());
 
       let row='<div class="ul-row" onclick="openViewer(\''+u.id+'\')">';
-      row+='<div class="ul-av-wrap"><div class="'+avCls+'">'+avInner+'</div>'+(u.vip?'<div class="ul-crown">👑</div>':'')+'</div>';
+      row+='<div class="ul-av-wrap"><div class="'+avCls+'">'+avInner+'</div>'+(u.vip?'<div class="ul-crown">👑</div>':'')+_wCheck+'</div>';
       const wppIconHtml='';
       row+='<div class="ul-info"><div class="ul-name">'+u.name+(u.vip?'<span class="ul-vip">VIP</span>':'')+wppIconHtml+(hasVideo?' 🎬':'')+(hasLink?' 🔗':'')+'</div>';
       row+='<div class="ul-prev">'+prev+'</div>';
@@ -3112,7 +3142,7 @@ function renderStatusFeed(){
   }
 }
 
-function statusCard(u,isMe=false){
+function statusCard(u,isMe=false,isWatchedCard=false){
   const items=svGetItems(u);
   const first=items[0];
   const hasVideo=!!first?.hasVideo;
@@ -3142,7 +3172,7 @@ function statusCard(u,isMe=false){
   const firstName=isMe?'Eu':u.name.split(' ')[0];
   const clickFn=isMe?'openMyStatus()':'openViewer(\''+u.id+'\')';
 
-  let card='<div class="sf-card '+(u.vip?'is-vip':'is-free')+'" onclick="'+clickFn+'">';
+  let card='<div class="sf-card '+(u.vip?'is-vip':'is-free')+(isWatchedCard?' watched-card':'')+'" onclick="'+clickFn+'">';
   card+=bgHtml;
   card+='<div class="sf-card-ov"></div>';
   if(emoji)card+='<div class="sf-emoji">'+emoji+'</div>';
@@ -3358,7 +3388,7 @@ window.openViewer=uid=>{
   SV_UID=uid;SV_ITEMS=items;SV_IDX=0;
   document.getElementById('sv').classList.add('open');
   svRenderItem();
-  if(uid!==CU?.uid)countView(u);
+  if(uid!==CU?.uid){countView(u);_markWatched(uid);setTimeout(renderStatusFeed,0);}
 };
 
 window.openMyStatus=()=>{
@@ -3385,7 +3415,7 @@ window.svNavNext=()=>{
       if(nextItems.length){
         SV_UID=nextUser.id;SV_ITEMS=nextItems;SV_IDX=0;
         svRenderItem();
-        if(nextUser.id!==CU?.uid)countView(nextUser);
+        if(nextUser.id!==CU?.uid){countView(nextUser);_markWatched(nextUser.id);}
         return;
       }
     }
@@ -5090,7 +5120,7 @@ window.openViewerAtStatus=(uid,statusId)=>{
   SV_IDX=idx>=0?idx:0;
   document.getElementById('sv').classList.add('open');
   svRenderItem();
-  if(uid!==CU?.uid)countView(u);
+  if(uid!==CU?.uid){countView(u);_markWatched(uid);setTimeout(renderStatusFeed,0);}
 };
 
 /* ════════════════════════════════════════════
