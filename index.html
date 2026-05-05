@@ -6291,7 +6291,9 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     _log('RESUME isPaused='+_isPaused);
     if(!_isPaused)return;
     _isPaused=false;
-    sv.classList.remove('paused');
+    _log('A');
+    if(sv)sv.classList.remove('paused');
+    _log('B');
 
     const idx=window.SV_IDX||0;
     const item=window.SV_ITEMS?window.SV_ITEMS[idx]:null;
