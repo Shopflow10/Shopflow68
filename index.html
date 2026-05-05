@@ -2460,7 +2460,7 @@ window._hardLoadingTimeout=setTimeout(function(){
 <!-- PWA -->
 <!-- ═══ OFERTA RELÂMPAGO MODAL ═══ -->
 <div class="flash-modal-ov" id="flashModalOv" onclick="if(event.target===this)closeFlashModal()">
-  <div class="flash-sheet" onclick="event.stopPropagation()">
+  <div class="flash-sheet">
     <div class="flash-handle"></div>
     <div class="flash-title">⚡ Oferta Relâmpago</div>
     <div class="flash-sub">Crie uma oferta por tempo limitado e destaque seus produtos!</div>
@@ -2508,8 +2508,8 @@ window._hardLoadingTimeout=setTimeout(function(){
       </div>
     </div>
 
-    <button class="flash-submit" onclick="event.stopPropagation();window.createFlashSale()">⚡ Ativar oferta relâmpago!</button>
-    <button style="width:100%;padding:12px;border:none;background:transparent;color:var(--muted2);font-size:13px;cursor:pointer;margin-top:8px" onclick="event.stopPropagation();window.closeFlashModal()">Cancelar</button>
+    <button class="flash-submit" onclick="createFlashSale()">⚡ Ativar oferta relâmpago!</button>
+    <button style="width:100%;padding:12px;border:none;background:transparent;color:var(--muted2);font-size:13px;cursor:pointer;margin-top:8px" onclick="closeFlashModal()">Cancelar</button>
   </div>
 </div>
 
@@ -6210,31 +6210,30 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
   /* ─── PAUSE: congela vídeo + barra, cancela timeout ─── */
   function _pause(){
     if(_isPaused||!sv.classList.contains('open'))return;
+    _isPaused=true;
+    sv.classList.add('paused');
 
-    // Captura largura da barra ANTES de qualquer mudança de classe ou estilo
+    // Pausa o vídeo e salva o ponto exato ANTES de pausar
+    const vid=document.getElementById('svVideo');
+    if(vid&&vid.src){
+      // Salva currentTime agora (antes de qualquer modificação)
+      _pausedVidTime=vid.currentTime;
+      // Bloqueia onended imediatamente para evitar que dispare durante o pause
+      vid._sfOnendedBlocked=true;
+      if(!vid.paused){vid.pause();}
+    }
+
+    // Congela a barra de progresso capturando o tamanho atual computado
     const idx=window.SV_IDX||0;
     const fill=document.getElementById('svFill'+idx);
     if(fill){
       const w=parseFloat(getComputedStyle(fill).width)||0;
       const pw=fill.parentElement?parseFloat(getComputedStyle(fill.parentElement).width)||window.innerWidth:window.innerWidth;
       _pausedFillW=pw>0?(w/pw*100):0;
-    }
-
-    _isPaused=true;
-    sv.classList.add('paused');
-
-    // Pausa o vídeo e salva o ponto exato
-    const vid=document.getElementById('svVideo');
-    if(vid&&vid.src){
-      _pausedVidTime=vid.currentTime;
-      vid._sfOnendedBlocked=true;
-      if(!vid.paused){vid.pause();}
-    }
-
-    // Trava a barra na posição capturada
-    if(fill){
+      // Para a transição CSS imediatamente travando na largura atual
       fill.style.transition='none';
       fill.style.width=_pausedFillW+'%';
+      fill.style.setProperty('--paused-w', _pausedFillW+'%');
     }
     clearTimeout(window.VT);
   }
@@ -6250,39 +6249,41 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     const vid=document.getElementById('svVideo');
 
     if(vid&&vid.src&&item&&item.video){
-      // Garante que o bloqueio de onended continua ativo durante a restauração
       vid._sfOnendedBlocked=true;
-
-      // Restaura currentTime para onde pausou (igual WhatsApp)
-      const targetTime=(_pausedVidTime>0&&!isNaN(_pausedVidTime))?_pausedVidTime:vid.currentTime;
 
       // Recalcula tempo restante pelo duration real do vídeo
       const dur=(vid.duration&&!isNaN(vid.duration)&&vid.duration>0)?vid.duration:30;
-      // Garante que não vai restaurar num ponto muito próximo do fim (evita pulo)
-      const safeTargetTime=Math.min(targetTime, dur-0.5);
-      const remSec=Math.max(0.3, dur-safeTargetTime);
+      // Usa o currentTime atual do vídeo (não altera — evita bloqueio do WebView)
+      const currentPos=(_pausedVidTime>0&&!isNaN(_pausedVidTime))?_pausedVidTime:vid.currentTime;
+      const remSec=Math.max(0.3, dur-currentPos);
 
-      // Restaura posição e faz play
-      vid.currentTime=safeTargetTime;
-
-      // Aguarda o currentTime ser aplicado antes de dar play (necessário no Android WebView)
-      setTimeout(()=>{
-        vid.play().catch(()=>{vid.muted=true;vid.play().catch(()=>{});});
+      // Play direto sem alterar currentTime (Android WebView aceita assim)
+      const playPromise=vid.play();
+      if(playPromise!==undefined){
+        playPromise.then(()=>{
+          vid._sfOnendedBlocked=false;
+        }).catch(()=>{
+          vid.muted=true;
+          vid.play().then(()=>{vid._sfOnendedBlocked=false;}).catch(()=>{});
+        });
+      }else{
         vid._sfOnendedBlocked=false;
+      }
 
-        // Recalcula barra de progresso a partir do ponto retomado
-        const fill=document.getElementById('svFill'+idx);
-        if(fill){
-          fill.style.transition='none';
-          fill.style.width=_pausedFillW+'%';
+      // Recalcula barra de progresso a partir do ponto atual
+      const fill=document.getElementById('svFill'+idx);
+      if(fill){
+        fill.style.transition='none';
+        fill.style.width=_pausedFillW+'%';
+        requestAnimationFrame(()=>{
           requestAnimationFrame(()=>{
             fill.style.transition=`width ${remSec}s linear`;
             fill.style.width='100%';
           });
-        }
-        clearTimeout(window.VT);
-        window.VT=setTimeout(()=>window.svNavNext&&window.svNavNext(),(remSec*1000)+300);
-      },80);
+        });
+      }
+      clearTimeout(window.VT);
+      window.VT=setTimeout(()=>window.svNavNext&&window.svNavNext(),(remSec*1000)+300);
     }else{
       // Imagem: retoma pelo % restante da barra
       const base=8000;
