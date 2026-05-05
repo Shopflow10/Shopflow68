@@ -6027,3 +6027,66 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 </body>
 </html>
+<script>
+// ===== FIX PAUSE STYLE WHATSAPP =====
+let _pressTimerActive = false;
+
+function pauseStory(){
+  const viewer = document.getElementById('sv');
+  const video = document.getElementById('svVideo');
+
+  if(!viewer) return;
+
+  _pressTimerActive = true;
+
+  // pausa vídeo
+  if(video) video.pause();
+
+  // pausa timer
+  if(window.VT) clearTimeout(window.VT);
+
+  // salvar progresso atual
+  const start = window._svItemStartTime || Date.now();
+  const dur = window._svItemDur || 8000;
+  const elapsed = Date.now() - start;
+  const progress = Math.min(100, (elapsed / dur) * 100);
+
+  viewer.style.setProperty('--paused-w', progress + '%');
+  viewer.classList.add('paused');
+}
+
+function resumeStory(){
+  const viewer = document.getElementById('sv');
+  const video = document.getElementById('svVideo');
+
+  if(!viewer) return;
+
+  _pressTimerActive = false;
+
+  // volta vídeo
+  if(video) video.play().catch(()=>{});
+
+  viewer.classList.remove('paused');
+
+  // recalcular tempo restante
+  const dur = window._svItemDur || 8000;
+  const start = window._svItemStartTime || Date.now();
+  const elapsed = Date.now() - start;
+  const remaining = Math.max(0, dur - elapsed);
+
+  // continuar timer
+  clearTimeout(window.VT);
+  window.VT = setTimeout(()=>window.svNavNext(), remaining);
+}
+
+// eventos touch estilo whatsapp
+document.addEventListener('DOMContentLoaded', ()=>{
+  const viewer = document.getElementById('sv');
+  if(!viewer) return;
+
+  viewer.addEventListener('touchstart', pauseStory, {passive:true});
+  viewer.addEventListener('touchend', resumeStory);
+  viewer.addEventListener('mousedown', pauseStory);
+  viewer.addEventListener('mouseup', resumeStory);
+});
+</script>
