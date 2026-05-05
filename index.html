@@ -2769,15 +2769,7 @@ function isExpired(e){return e&&Date.now()>e;}
 async function deletarVideosExpirados(uid,statuses){
   const expirados=statuses.filter(s=>isExpired(s.expiry)&&s.videoPublicId);
   if(expirados.length===0)return;
-  for(const s of expirados){
-    try{
-      await fetch('/.netlify/functions/delete-cloudinary',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({publicId:s.videoPublicId,resourceType:'video'})
-      });
-    }catch(e){console.warn('Erro ao deletar vídeo expirado:',e);}
-  }
+  // Nota: deleção de vídeos no Cloudinary desativada (não usa mais Netlify Functions)
   // Atualiza Firestore removendo os expirados
   const validos=statuses.filter(s=>!isExpired(s.expiry));
   try{await updateDoc(doc(db,'users',uid),{statuses:validos});}catch(e){}
@@ -5920,8 +5912,9 @@ function startFlashBannerTimer(){
     // Expira ofertas no Firestore automaticamente
     allFlash.forEach(async s=>{
       if(s.flashEndsAt<=Date.now()){
-        // Limpa flash do status
-        const uid=Object.keys(UC.find(u=>(u.statuses||[]).some(st=>st.id===s.id))||{})[0];
+        // Encontra o usuário dono deste status
+        const ownerUser=UC.find(u=>(u.statuses||[]).some(st=>st.id===s.id));
+        const uid=ownerUser?.id||ownerUser?.uid;
         if(!uid||uid!==CU?.uid)return;
         const statuses=[...(UD.statuses||[])];
         const idx=statuses.findIndex(st=>st.id===s.id);
@@ -6006,18 +5999,16 @@ setTimeout(startFlashBannerTimer,2000);
    ════════════════════════════════════════════ */
 (()=>{
   /* ── 1. WHITELIST DE DOMÍNIOS AUTORIZADOS ─────────────────── */
-  // ✅ Adicione TODOS os seus domínios aqui (Netlify, domínio próprio, localhost)
+  // ✅ Adicione TODOS os seus domínios aqui (GitHub Pages, Firebase, localhost)
   const ALLOWED_DOMAINS=[
     'localhost',
     '127.0.0.1',
     'statusvip-1b293.web.app',
     'statusvip-1b293.firebaseapp.com',
-    'shopflow68.netlify.app',
     'shopflow10.github.io',
   ];
 
   const ALLOWED_PATTERNS=[
-    /\.netlify\.app$/,
     /\.web\.app$/,
     /\.firebaseapp\.com$/,
     /\.github\.io$/,
@@ -6041,23 +6032,7 @@ setTimeout(startFlashBannerTimer,2000);
 
   /* ── 2. IFRAME BLOCKER — desativado para compatibilidade com WebView ── */
 
-  /* ── 3. ANTI-DEVTOOLS (detecção simples) ───────────────────── */
-  let _devtoolsOpen=false;
-  const _devCheck=()=>{
-    const t=performance.now();
-    // eslint-disable-next-line no-debugger
-    debugger; // pausa só se devtools estiver aberto
-    if(performance.now()-t>100){
-      if(!_devtoolsOpen){
-        _devtoolsOpen=true;
-        // Não bloqueia, mas limpa dados sensíveis do console
-        console.clear();
-        console.log('%c🔒 ShopFlow — Ambiente protegido','color:#7C3AED;font-size:16px;font-weight:bold');
-        console.log('%cEste código é propriedade privada. Uso não autorizado é proibido.','color:#ef4444;font-size:12px');
-      }
-    }else{_devtoolsOpen=false;}
-  };
-  setInterval(_devCheck,3000);
+  /* ── 3. ANTI-DEVTOOLS — desativado (interfere com WebView/APK) ── */
 
   /* ── 4. CONSOLE BRANDING ────────────────────────────────────── */
   console.log('%c⚡ ShopFlow v2','background:linear-gradient(135deg,#7C3AED,#F0287C);color:#fff;font-size:20px;font-weight:900;padding:8px 16px;border-radius:8px');
@@ -6330,10 +6305,16 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     clearTimeout(_holdTimer);
     if(_blocked){_blocked=false;return;}
 
-    // Estava segurando: só retoma, não navega
+    // Estava segurando OU estava pausado: só retoma, não navega
     if(_isHolding||_isPaused){
       _resume();
       _isHolding=false;
+      return;
+    }
+
+    // Se moveu durante o toque (não era hold), apenas certifica que não está pausado
+    if(_moved){
+      if(_isPaused)_resume();
       return;
     }
 
