@@ -6298,6 +6298,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     const item=window.SV_ITEMS?window.SV_ITEMS[idx]:null;
     const vid=document.getElementById('svVideo');
 
+    _log('item.video='+(!!(item&&item.video))+' vid.src='+(!!(vid&&vid.src))+' paused='+(!!(vid&&vid.paused)));
     if(vid&&vid.src&&item&&item.video){
       const dur=(vid.duration&&!isNaN(vid.duration)&&vid.duration>0)?vid.duration:30;
 
