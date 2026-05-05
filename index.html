@@ -633,8 +633,22 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 .sv-btn{display:flex;align-items:center;justify-content:center;gap:6px;position:fixed;bottom:170px;left:50%;transform:translateX(-50%);z-index:310;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:13px;font-weight:700;padding:12px 22px;border-radius:50px;text-decoration:none;box-shadow:0 4px 20px rgba(124,58,237,.5);font-family:'Inter',sans-serif;white-space:nowrap;animation:pulsebtn 2s infinite}
 .sv-btn:active{opacity:.8}
 .sv-hint{font-size:10px;color:rgba(255,255,255,.5);position:fixed;bottom:154px;left:50%;transform:translateX(-50%);z-index:9999;white-space:nowrap;text-align:center;-webkit-transform:translateX(-50%) translateZ(0);transform:translateX(-50%) translateZ(0)}
-/* Barra inferior de ações */
-.sv-actions{position:fixed;bottom:0;left:0;right:0;z-index:9998;background:linear-gradient(to top,rgba(0,0,0,.95) 0%,rgba(0,0,0,.6) 70%,transparent 100%);padding:14px 16px 32px;display:flex;align-items:center;gap:10px}
+/* Barra inferior de ações — coluna: CTA em cima, botões embaixo */
+.sv-actions{position:fixed;bottom:0;left:0;right:0;z-index:9998;
+  background:linear-gradient(to top,rgba(0,0,0,.98) 0%,rgba(0,0,0,.8) 60%,transparent 100%);
+  padding:10px 14px 28px;display:flex;flex-direction:column;gap:8px}
+/* Botão CTA dentro da barra */
+.sv-cta-inner{display:none;align-items:center;justify-content:center;gap:8px;
+  border-radius:50px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-weight:900;
+  font-size:15px;cursor:pointer;padding:14px;text-align:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.4);text-decoration:none;
+  animation:pulsebtn 2s infinite;width:100%}
+.sv-cta-inner.show{display:flex!important}
+.sv-cta-inner.sv-cta-wpp{background:linear-gradient(135deg,var(--wpp),var(--wpp2));color:#fff}
+.sv-cta-inner.sv-cta-buy{background:linear-gradient(135deg,#e91e8c,#9c27b0);color:#fff}
+.sv-cta-inner.sv-cta-link{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+/* Linha dos botões Reagir + Views */
+.sv-actions-row{display:flex;align-items:center;gap:8px}
 .sv-like-btn{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,.2);border-radius:50px;padding:10px 20px;color:#fff;font-size:15px;font-family:'Inter',sans-serif;font-weight:700;cursor:pointer;transition:all .2s;flex-shrink:0}
 .sv-like-btn:active{transform:scale(.93)}
 .sv-like-btn.liked{border-color:rgba(239,68,68,.7);background:rgba(239,68,68,.18)}
@@ -662,8 +676,8 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 /* ═══ SISTEMA DE REAÇÕES ═══ */
 /* Barra de ações do viewer */
 .sv-actions{position:fixed;bottom:0;left:0;right:0;z-index:9998;
-  background:linear-gradient(to top,rgba(0,0,0,.96) 0%,rgba(0,0,0,.7) 65%,transparent 100%);
-  padding:12px 14px 28px;display:flex;align-items:center;gap:8px}
+  background:linear-gradient(to top,rgba(0,0,0,.98) 0%,rgba(0,0,0,.8) 60%,transparent 100%);
+  padding:10px 14px 28px;display:flex;flex-direction:column;gap:8px}
 /* Botão de reação */
 .sv-react-btn{position:relative;display:flex;align-items:center;gap:7px;
   background:rgba(255,255,255,.1);backdrop-filter:blur(12px);
@@ -704,13 +718,13 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
   border-radius:50px;padding:0 4px;min-width:14px;height:14px;
   display:flex;align-items:center;justify-content:center;
   border:1.5px solid rgba(20,20,35,1)}
-/* Linha de reações rápidas sob o status */
-.sv-reactions-row{position:fixed;bottom:76px;left:0;right:0;z-index:9997;
+/* Linha de reações rápidas acima da barra de ações */
+.sv-reactions-row{position:fixed;bottom:90px;left:0;right:0;z-index:9997;
   display:flex;align-items:center;gap:6px;padding:0 14px;
   pointer-events:none;opacity:0;transition:opacity .3s,bottom .3s}
 .sv-reactions-row.show{opacity:1;pointer-events:all}
-/* Quando o CTA grande está visível, sobe os chips acima dele */
-.sv-reactions-row.cta-visible{bottom:142px;}
+/* Quando o CTA está visível, sobe os chips acima dele */
+.sv-reactions-row.cta-visible{bottom:150px;}
 .sv-reaction-chip{display:flex;align-items:center;gap:4px;
   background:rgba(255,255,255,.12);backdrop-filter:blur(10px);
   border:1px solid rgba(255,255,255,.18);border-radius:50px;
@@ -1086,17 +1100,7 @@ body{background:var(--dark);color:var(--text);font-family:'Plus Jakarta Sans',sa
 .vm-text strong{color:#fff}
 .vm-today{font-size:10px;color:var(--muted2);margin-top:1px}
 
-/* Botão CTA grande no viewer */
-.sv-cta-big{position:fixed;bottom:82px;left:16px;right:16px;z-index:9996;
-  border-radius:50px;border:none;font-family:'Inter',sans-serif;font-weight:900;
-  font-size:15px;cursor:pointer;padding:15px;text-align:center;
-  box-shadow:0 6px 24px rgba(0,0,0,.4);animation:pulsebtn 2s infinite;
-  text-decoration:none;display:none;align-items:center;justify-content:center;gap:8px;
-  -webkit-transform:translateZ(0);transform:translateZ(0);will-change:transform}
-.sv-cta-big.show{display:flex!important;visibility:visible!important;opacity:1!important}
-.sv-cta-wpp{background:linear-gradient(135deg,var(--wpp),var(--wpp2));color:#fff}
-.sv-cta-buy{background:linear-gradient(135deg,#e91e8c,#9c27b0);color:#fff}
-.sv-cta-link{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+/* sv-cta-big — substituído por sv-cta-inner dentro da barra */
 
 /* Múltiplas fotos — mini carrossel no editor */
 .multi-photos-wrap{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px;
@@ -1928,8 +1932,6 @@ window._hardLoadingTimeout=setTimeout(function(){
   </div>
   <a class="sv-btn" id="svBtn" href="#" onclick="location.href=this.href;return false;" rel="noopener noreferrer" style="display:none">🔗 Ver link</a>
   <div class="sv-hint" id="svHint" style="display:none">Link exclusivo VIP 👑</div>
-  <!-- Botão CTA grande (produto) -->
-  <a class="sv-cta-big" id="svCtaBig" href="#" onclick="location.href=this.href;return false;"></a>
   <!-- Badge categoria no viewer -->
   <div class="sv-category-badge" id="svCategoryBadge"></div>
   <!-- Mini carrossel de fotos -->
@@ -1945,16 +1947,21 @@ window._hardLoadingTimeout=setTimeout(function(){
   <!-- Linha de reações rápidas (chips) -->
   <div class="sv-reactions-row" id="svReactionsRow"></div>
 
-  <!-- Barra de ações inferior -->
+  <!-- Barra de ações inferior — layout em coluna: CTA em cima, botões embaixo -->
   <div class="sv-actions" id="svActions" style="display:none">
-    <button class="sv-react-btn" id="svReactBtn" onclick="toggleReactionPicker()">
-      <span id="svMyReaction">😊</span>
-      <span id="svReactionCount" style="font-size:13px">Reagir</span>
-    </button>
-    <button class="sv-views-btn" id="svViewsBtn" onclick="openInfoPanel(&#39;views&#39;)">
-      <span>👁</span>
-      <span id="svViewsCount">0 visualizações</span>
-    </button>
+    <!-- Botão CTA WhatsApp/Comprar — fica aqui dentro, acima dos botões -->
+    <a class="sv-cta-inner" id="svCtaBig" href="#" onclick="location.href=this.href;return false;"></a>
+    <!-- Linha de botões Reagir + Visualizações -->
+    <div class="sv-actions-row">
+      <button class="sv-react-btn" id="svReactBtn" onclick="toggleReactionPicker()">
+        <span id="svMyReaction">😊</span>
+        <span id="svReactionCount" style="font-size:13px">Reagir</span>
+      </button>
+      <button class="sv-views-btn" id="svViewsBtn" onclick="openInfoPanel('views')">
+        <span>👁</span>
+        <span id="svViewsCount">0 visualizações</span>
+      </button>
+    </div>
   </div>
 
   <!-- Picker de reações -->
@@ -3185,7 +3192,7 @@ function svRenderItem(){
   const hasWpp=u.vip&&hasPhone;
   if(item.sold){
     // Produto vendido — botão desativado
-    ctaBig.className='sv-cta-big show';
+    ctaBig.className='sv-cta-inner show';
     ctaBig.style.background='rgba(100,100,100,.6)';
     ctaBig.style.color='#fff';
     ctaBig.removeAttribute('href');
@@ -3196,7 +3203,7 @@ function svRenderItem(){
   }else if(hasWpp&&!hasLink){
     // Tem WhatsApp mas não tem link — botão Chamar no WhatsApp
     const wppMsg=`Olá ${u.name.split(' ')[0]}! Vi seu produto no SeuStatus 👑`;
-    ctaBig.className='sv-cta-big sv-cta-wpp show';
+    ctaBig.className='sv-cta-inner sv-cta-wpp show';
     ctaBig.style.background='';ctaBig.style.color='';
     const _wppUrl=wppLink(u.phone,wppMsg);
     ctaBig.href=_wppUrl;
@@ -3214,7 +3221,7 @@ function svRenderItem(){
     document.getElementById('svReactionsRow')?.classList.add('cta-visible');
   }else if(hasLink){
     // Tem link — botão CTA grande
-    ctaBig.className='sv-cta-big sv-cta-buy show';
+    ctaBig.className='sv-cta-inner sv-cta-buy show';
     ctaBig.style.background='';ctaBig.style.color='';
     const _ctaUrl=item.link;
     ctaBig.href=_ctaUrl;ctaBig.target='_blank';ctaBig.rel='noopener noreferrer';
@@ -3232,8 +3239,7 @@ function svRenderItem(){
     newBtn.style.display='none';
     document.getElementById('svReactionsRow')?.classList.add('cta-visible');
   }else{
-    ctaBig.className='sv-cta-big';
-    ctaBig.style.display='none';
+    ctaBig.className='sv-cta-inner';
     newBtn.style.display='none';
     document.getElementById('svHint').style.display='none';
     document.getElementById('svReactionsRow')?.classList.remove('cta-visible');
@@ -3640,16 +3646,12 @@ window.openInfoPanel=async(tab='views')=>{
   _infoPanelTab=tab;_reactionFilter=null;
   document.getElementById('svInfoOv').classList.add('open');
   document.getElementById('svInfoPanel').classList.add('open');
-  const ctaEl=document.getElementById('svCtaBig');
-  if(ctaEl)ctaEl.style.display='none';
   switchInfoTab(tab);
 };
 window.closeInfoPanel=()=>{
   document.getElementById('svInfoOv').classList.remove('open');
   document.getElementById('svInfoPanel').classList.remove('open');
   _reactionFilter=null;
-  const ctaEl=document.getElementById('svCtaBig');
-  if(ctaEl&&ctaEl.classList.contains('show'))ctaEl.style.display='';
 };
 
 window.switchInfoTab=async(tab)=>{
@@ -5889,7 +5891,7 @@ setTimeout(startFlashBannerTimer,2000);
     '.sv-react-btn','.sv-comment-btn','.sv-views-btn',
     '.sv-x','.sv-delete-btn',
     '.sv-rp-emoji','.sv-rs-chip','.sv-reaction-chip',
-    '.sv-cta-big','.sv-btn',
+    '.sv-cta-inner','.sv-btn',
     '.sv-reaction-picker',
     '.sv-info-panel','.sv-info-ov',
     '.sv-comments-panel','.sv-comments-ov',
