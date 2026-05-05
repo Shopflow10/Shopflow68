@@ -5969,27 +5969,59 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
 
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
-  let hold = false;
-  let currentVideo = null;
+  let currentVideo=null;
+  let progressBars=[];
+  let rafId=null;
+  let startTime=0;
+  let pausedAt=0;
+  let isHolding=false;
 
-  document.addEventListener('touchstart',e=>{
-    const vid = document.querySelector('.sv video');
+  function getVideo(){
+    return document.querySelector('.sv video');
+  }
+  function getBar(){
+    return document.querySelector('.sv-fill');
+  }
+
+  function updateBar(){
+    if(!currentVideo) return;
+    const bar=getBar();
+    if(!bar) return;
+
+    const percent = (currentVideo.currentTime / currentVideo.duration) * 100;
+    bar.style.width = percent + '%';
+
+    if(!isHolding){
+      rafId=requestAnimationFrame(updateBar);
+    }
+  }
+
+  document.addEventListener('touchstart',()=>{
+    const vid=getVideo();
     if(vid){
-      hold = true;
-      currentVideo = vid;
+      currentVideo=vid;
+      isHolding=true;
       vid.pause();
-      vid.dataset.pausedTime = vid.currentTime;
+      pausedAt=vid.currentTime;
+      cancelAnimationFrame(rafId);
     }
   });
 
-  document.addEventListener('touchend',e=>{
+  document.addEventListener('touchend',()=>{
     if(currentVideo){
-      const t = parseFloat(currentVideo.dataset.pausedTime || 0);
-      currentVideo.currentTime = t;
+      currentVideo.currentTime=pausedAt;
       currentVideo.play();
-      hold = false;
+      isHolding=false;
+      updateBar();
     }
   });
+
+  document.addEventListener('play',e=>{
+    if(e.target.tagName==="VIDEO"){
+      currentVideo=e.target;
+      updateBar();
+    }
+  },true);
 });
 </script>
 
