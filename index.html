@@ -6289,7 +6289,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
 
   /* ─── RESUME: retoma vídeo do ponto exato + recalcula barra ─── */
   function _resume(){
-    _log('RESUME called isPaused='+_isPaused);
+    _log('RESUME isPaused='+_isPaused);
     if(!_isPaused)return;
     _isPaused=false;
     sv.classList.remove('paused');
@@ -6298,7 +6298,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     const item=window.SV_ITEMS?window.SV_ITEMS[idx]:null;
     const vid=document.getElementById('svVideo');
 
-    _log('item.video='+(!!(item&&item.video))+' vid.src='+(!!(vid&&vid.src))+' paused='+(!!(vid&&vid.paused)));
+    try{_log('idx='+idx+' items='+(window.SV_ITEMS?window.SV_ITEMS.length:'null')+' vid='+(!!(vid&&vid.src))+' item.video='+(!!(item&&item.video)));}catch(e){_log('ERR:'+e.message);}
     if(vid&&vid.src&&item&&item.video){
       const dur=(vid.duration&&!isNaN(vid.duration)&&vid.duration>0)?vid.duration:30;
 
@@ -6329,7 +6329,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
 
       // Play — tenta direto, se falhar muta e tenta de novo
       vid._sfOnendedBlocked=false;
-      _log('PLAY ct='+vid.currentTime.toFixed(2)+' saved='+savedTime.toFixed(2)+' rem='+remSec.toFixed(1)+'s pct='+realPct.toFixed(1)+'%');
+      try{_log('PLAY ct='+vid.currentTime.toFixed(2)+' saved='+savedTime.toFixed(2)+' rem='+remSec.toFixed(1)+'s pct='+realPct.toFixed(1)+'%');}catch(e){_log('PLAY ERR:'+e.message);}
       const tryPlay=()=>{
         const p=vid.play();
         if(p!==undefined){
