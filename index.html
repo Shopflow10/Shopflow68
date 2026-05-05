@@ -6233,16 +6233,32 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
   }
 
   /* ─── DEBUG LOG VISUAL ─── */
+  // DEBUG — cria container fixo no body com z-index máximo
   const _dbgEl=document.createElement('div');
-  _dbgEl.style.cssText='position:fixed;top:60px;left:0;right:0;z-index:2147483647;pointer-events:none;padding:4px 8px;font-size:10px;font-family:monospace;max-height:180px;overflow:hidden;';
-  (document.getElementById('sv')||document.body).appendChild(_dbgEl);
+  _dbgEl.id='__svDbgLog';
+  _dbgEl.style.position='fixed';
+  _dbgEl.style.top='70px';
+  _dbgEl.style.left='0';
+  _dbgEl.style.right='0';
+  _dbgEl.style.zIndex='2147483647';
+  _dbgEl.style.pointerEvents='none';
+  _dbgEl.style.padding='4px 8px';
+  _dbgEl.style.fontFamily='monospace';
+  _dbgEl.style.fontSize='11px';
+  document.body.appendChild(_dbgEl);
   function _log(msg){
     const d=document.createElement('div');
-    d.style.cssText='background:rgba(0,0,0,0.9);color:#0f0;padding:2px 5px;margin-bottom:1px;border-radius:3px;white-space:nowrap;overflow:hidden;';
-    d.textContent=(Date.now()%10000)+' '+msg;
+    d.style.background='rgba(0,0,0,0.95)';
+    d.style.color='#00ff00';
+    d.style.padding='3px 6px';
+    d.style.marginBottom='2px';
+    d.style.borderRadius='4px';
+    d.style.whiteSpace='nowrap';
+    d.textContent=(Date.now()%100000)+' '+msg;
     _dbgEl.appendChild(d);
-    if(_dbgEl.children.length>12)_dbgEl.removeChild(_dbgEl.children[0]);
+    if(_dbgEl.children.length>10)_dbgEl.removeChild(_dbgEl.children[0]);
   }
+  _log('DEBUG ATIVO - abre um status');
 
   /* ─── PAUSE: congela vídeo + barra, cancela timeout ─── */
   function _pause(){
