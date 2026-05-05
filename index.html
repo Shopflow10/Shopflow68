@@ -3318,22 +3318,24 @@ function svRenderItem(){
   const progEl=document.getElementById('svProg');  progEl.innerHTML=SV_ITEMS.map((_,i)=>`<div class="sv-bar"><div class="sv-fill" id="svFill${i}" style="width:${i<SV_IDX?'100%':'0%'}"></div></div>`).join('');
   const fill=document.getElementById('svFill'+SV_IDX);
   let dur=hasVideo?30000:8000;
-  window._svItemStartTime=null; // reset
+  window._svItemStartTime=null;
+  window._svItemDur=dur;
   if(hasVideo){
     svVideo.onloadedmetadata=()=>{
       dur=Math.round(svVideo.duration*1000)||30000;
-      // Inicia play somente agora que temos a duração real
+      window._svItemDur=dur;
+      window._svItemStartTime=Date.now();
       svVideo.play().catch(()=>{svVideo.muted=true;svVideo.play().catch(()=>{});});
       if(fill){fill.style.transition='none';fill.style.width='0%';setTimeout(()=>{fill.style.transition=`width ${dur/1000}s linear`;fill.style.width='100%';},50);}
       clearTimeout(VT);VT=setTimeout(()=>svNavNext(),dur+200);
     };
     svVideo.onended=()=>{
-      // Não navega se estiver bloqueado durante pause/resume (fix do hold de tela)
       if(svVideo._sfOnendedBlocked)return;
       clearTimeout(VT);svNavNext();
     };
   }else{
     window._svItemStartTime=Date.now();
+    window._svItemDur=dur;
     if(fill){fill.style.transition='none';fill.style.width='0%';setTimeout(()=>{fill.style.transition=`width ${dur/1000}s linear`;fill.style.width='100%';},50);}
     clearTimeout(VT);VT=setTimeout(()=>svNavNext(),dur+400);
   }
@@ -6209,30 +6211,25 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
 
   const HOLD_MS=220;
 
-  /* ─── Calcula % real da barra interpolando pelo tempo decorrido ─── */
+  /* ─── Calcula % real da barra pelo tempo decorrido (confiável no WebView) ─── */
   function _computeFillPct(fill){
-    // Tenta primeiro pelo computed style (quando a transição CSS já está rodando)
-    const pw=fill.parentElement?parseFloat(getComputedStyle(fill.parentElement).width)||window.innerWidth:window.innerWidth;
-    const w=parseFloat(getComputedStyle(fill).width)||0;
-    const cssPct=pw>0?(w/pw*100):0;
-
-    // Se a transição já começou e retornou um valor razoável, usa ele
-    if(cssPct>0.5)return cssPct;
-
-    // Fallback: calcula pelo currentTime do vídeo (mais confiável no Android WebView)
+    // 1ª opção: vídeo — usa currentTime/duration (fonte de verdade mais precisa)
     const vid=document.getElementById('svVideo');
-    if(vid&&vid.src&&!isNaN(vid.duration)&&vid.duration>0){
+    if(vid&&vid.src&&!isNaN(vid.duration)&&vid.duration>0&&vid.currentTime>0){
       return Math.min(100,(vid.currentTime/vid.duration)*100);
     }
 
-    // Fallback para imagem: calcula pelo tempo decorrido desde o início do item
+    // 2ª opção: imagem — usa tempo decorrido desde o início do item
     if(window._svItemStartTime){
       const elapsed=Date.now()-window._svItemStartTime;
-      const total=8000; // duração padrão imagem
-      return Math.min(100,(elapsed/total)*100);
+      const total=window._svItemDur||8000;
+      return Math.min(99,Math.max(0,(elapsed/total)*100));
     }
 
-    return cssPct;
+    // 3ª opção: fallback pelo computed style
+    const pw=fill.parentElement?parseFloat(getComputedStyle(fill.parentElement).width)||window.innerWidth:window.innerWidth;
+    const w=parseFloat(getComputedStyle(fill).width)||0;
+    return pw>0?(w/pw*100):0;
   }
 
   /* ─── PAUSE: congela vídeo + barra, cancela timeout ─── */
@@ -6260,7 +6257,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     clearTimeout(window.VT);
   }
 
-  /* ─── RESUME: retoma vídeo do ponto exato + recalcula barra (estilo WhatsApp) ─── */
+  /* ─── RESUME: retoma vídeo do ponto exato + recalcula barra ─── */
   function _resume(){
     if(!_isPaused)return;
     _isPaused=false;
@@ -6271,26 +6268,19 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     const vid=document.getElementById('svVideo');
 
     if(vid&&vid.src&&item&&item.video){
-      vid._sfOnendedBlocked=true;
-
       const dur=(vid.duration&&!isNaN(vid.duration)&&vid.duration>0)?vid.duration:30;
-      // Usa o currentTime salvo no pause (mais confiável que vid.currentTime após resume)
-      const currentPos=(_pausedVidTime>0&&!isNaN(_pausedVidTime))?_pausedVidTime:vid.currentTime;
-      const remSec=Math.max(0.3, dur-currentPos);
-      // Recalcula % da barra com base no currentTime real (evita discrepância)
-      const realPct=Math.min(100,(currentPos/dur)*100);
 
-      const playPromise=vid.play();
-      if(playPromise!==undefined){
-        playPromise.then(()=>{vid._sfOnendedBlocked=false;}).catch(()=>{
-          vid.muted=true;
-          vid.play().then(()=>{vid._sfOnendedBlocked=false;}).catch(()=>{});
-        });
-      }else{
-        vid._sfOnendedBlocked=false;
+      // Restaura currentTime salvo (WebView/Chrome às vezes reseta ao pausar)
+      const savedTime=(_pausedVidTime>0&&!isNaN(_pausedVidTime))?_pausedVidTime:vid.currentTime;
+      if(Math.abs(vid.currentTime-savedTime)>0.5){
+        try{vid.currentTime=savedTime;}catch(e){}
       }
 
-      // Retoma barra exatamente do ponto do vídeo
+      const currentPos=savedTime;
+      const remSec=Math.max(0.3,dur-currentPos);
+      const realPct=Math.min(100,(currentPos/dur)*100);
+
+      // Retoma barra ANTES do play para o usuário ver resposta imediata
       const fill=document.getElementById('svFill'+idx);
       if(fill){
         fill.style.transition='none';
@@ -6304,8 +6294,22 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
       }
       clearTimeout(window.VT);
       window.VT=setTimeout(()=>window.svNavNext&&window.svNavNext(),(remSec*1000)+300);
+
+      // Play — tenta direto, se falhar muta e tenta de novo
+      vid._sfOnendedBlocked=false;
+      const tryPlay=()=>{
+        const p=vid.play();
+        if(p!==undefined){
+          p.catch(()=>{
+            vid.muted=true;
+            vid.play().catch(()=>{});
+          });
+        }
+      };
+      tryPlay();
+
     }else{
-      // Imagem: usa o % calculado no pause e o tempo decorrido para calcular restante
+      // Imagem: retoma pelo % congelado no pause
       const frozenPct=_pausedFillW;
       const base=8000;
       const rem=Math.max(300,base*((100-frozenPct)/100));
@@ -6393,6 +6397,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     clearTimeout(_holdTimer);
     _blocked=false;
     _isHolding=false;
+    _moved=false;
     if(_isPaused)_resume();
   },{passive:true});
 
