@@ -5874,10 +5874,12 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
       // Timer para próximo
       clearTimeout(window.VT);
       window.VT=setTimeout(()=>window.svNavNext&&window.svNavNext(),(remSec*1000)+300);
-      // Play
+      // Play — pequeno delay para garantir que o browser processou o estado
       vid._sfOnendedBlocked=false;
-      const p=vid.play();
-      if(p&&p.catch)p.catch(()=>{vid.muted=true;vid.play().catch(()=>{});});
+      setTimeout(()=>{
+        const p=vid.play();
+        if(p&&p.catch)p.catch(()=>{vid.muted=true;vid.play().catch(()=>{});});
+      },30);
     }else{
       // --- IMAGEM ---
       const base=window._svItemDur||8000;
@@ -5968,64 +5970,6 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
   window._svResume=_resume;
   window._svIsPaused=()=>_isPaused;
 })();
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded',()=>{
-  let currentVideo=null;
-  let progressBars=[];
-  let rafId=null;
-  let startTime=0;
-  let pausedAt=0;
-  let isHolding=false;
-
-  function getVideo(){
-    return document.querySelector('.sv video');
-  }
-  function getBar(){
-    return document.querySelector('.sv-fill');
-  }
-
-  function updateBar(){
-    if(!currentVideo) return;
-    const bar=getBar();
-    if(!bar) return;
-
-    const percent = (currentVideo.currentTime / currentVideo.duration) * 100;
-    bar.style.width = percent + '%';
-
-    if(!isHolding){
-      rafId=requestAnimationFrame(updateBar);
-    }
-  }
-
-  document.addEventListener('touchstart',()=>{
-    const vid=getVideo();
-    if(vid){
-      currentVideo=vid;
-      isHolding=true;
-      vid.pause();
-      pausedAt=vid.currentTime;
-      cancelAnimationFrame(rafId);
-    }
-  });
-
-  document.addEventListener('touchend',()=>{
-    if(currentVideo){
-      currentVideo.currentTime=pausedAt;
-      currentVideo.play();
-      isHolding=false;
-      updateBar();
-    }
-  });
-
-  document.addEventListener('play',e=>{
-    if(e.target.tagName==="VIDEO"){
-      currentVideo=e.target;
-      updateBar();
-    }
-  },true);
-});
 </script>
 
 </body>
