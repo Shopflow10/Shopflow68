@@ -5841,6 +5841,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
     const fill=document.getElementById('svFill'+idx);
     if(fill){
       _pausedFillW=_computeFillPct();
+      fill.style.setProperty('--paused-w',_pausedFillW+'%');
       fill.style.transition='none';
       fill.style.width=_pausedFillW+'%';
     }
@@ -5862,6 +5863,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
       const pct=Math.min(99,(savedTime/dur)*100);
       // Restaura barra
       if(fill){
+        fill.style.removeProperty('--paused-w');
         fill.style.transition='none';
         fill.style.width=pct+'%';
         requestAnimationFrame(()=>requestAnimationFrame(()=>{
@@ -5881,6 +5883,7 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
       const base=window._svItemDur||8000;
       const rem=Math.max(300,base*(1-_pausedFillW/100));
       if(fill){
+        fill.style.removeProperty('--paused-w');
         fill.style.transition='none';
         fill.style.width=_pausedFillW+'%';
         requestAnimationFrame(()=>requestAnimationFrame(()=>{
@@ -5965,6 +5968,64 @@ self.addEventListener('activate',e=>e.waitUntil(clients.claim()));
   window._svResume=_resume;
   window._svIsPaused=()=>_isPaused;
 })();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  let currentVideo=null;
+  let progressBars=[];
+  let rafId=null;
+  let startTime=0;
+  let pausedAt=0;
+  let isHolding=false;
+
+  function getVideo(){
+    return document.querySelector('.sv video');
+  }
+  function getBar(){
+    return document.querySelector('.sv-fill');
+  }
+
+  function updateBar(){
+    if(!currentVideo) return;
+    const bar=getBar();
+    if(!bar) return;
+
+    const percent = (currentVideo.currentTime / currentVideo.duration) * 100;
+    bar.style.width = percent + '%';
+
+    if(!isHolding){
+      rafId=requestAnimationFrame(updateBar);
+    }
+  }
+
+  document.addEventListener('touchstart',()=>{
+    const vid=getVideo();
+    if(vid){
+      currentVideo=vid;
+      isHolding=true;
+      vid.pause();
+      pausedAt=vid.currentTime;
+      cancelAnimationFrame(rafId);
+    }
+  });
+
+  document.addEventListener('touchend',()=>{
+    if(currentVideo){
+      currentVideo.currentTime=pausedAt;
+      currentVideo.play();
+      isHolding=false;
+      updateBar();
+    }
+  });
+
+  document.addEventListener('play',e=>{
+    if(e.target.tagName==="VIDEO"){
+      currentVideo=e.target;
+      updateBar();
+    }
+  },true);
+});
 </script>
 
 </body>
