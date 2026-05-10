@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEBULA ARENA</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap');
+
+  :root {
+    --neon-cyan: #00f5ff;
+    --neon-pink: #ff006e;
+    --neon-purple: #8b00ff;
+    --neon-green: #00ff88;
+    --neon-orange: #ff6b00;
+    --dark-bg: #020408;
+    --dark-panel: rgba(0,10,20,0.85);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--dark-bg);
+    font-family: 'Rajdhani', sans-serif;
+    overflow: hidden;
+    width: 100vw; height: 100vh;
+    color: #fff;
+  }
+
+  /* ── TELA DE ENTRADA ── */
+  #intro {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at 50% 50%, #0a0020 0%, #020408 70%);
+    z-index: 100;
+    transition: opacity 0.8s ease;
+  }
+  #intro canvas { position:absolute; inset:0; }
+
+  .intro-content {
+    position: relative; z-index: 10;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 24px;
+  }
+
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(40px, 8vw, 96px);
+    font-weight: 900;
+    letter-spacing: 8px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(0,245,255,0.5));
+    animation: logoPulse 3s ease-in-out infinite;
+  }
+  @keyframes logoPulse {
+    0%,100% { filter: drop-shadow(0 0 30px rgba(0,245,255,0.5)); }
+    50% { filter: drop-shadow(0 0 60px rgba(139,0,255,0.8)); }
+  }
+
+  .subtitle {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    letter-spacing: 6px;
+    color: rgba(0,245,255,0.6);
+    text-transform: uppercase;
+  }
+
+  .name-input-wrap {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 12px;
+    margin-top: 12px;
+  }
+
+  .name-input-wrap label {
+    font-size: 12px;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+  }
+
+  #playerName {
+    background: rgba(0,245,255,0.05);
+    border: 1px solid rgba(0,245,255,0.3);
+    border-radius: 4px;
+    padding: 12px 24px;
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    color: var(--neon-cyan);
+    text-align: center;
+    outline: none;
+    width: 260px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  #playerName:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 20px rgba(0,245,255,0.2), inset 0 0 10px rgba(0,245,255,0.05);
+  }
+
+  .btn-play {
+    margin-top: 8px;
+    padding: 16px 60px;
+    background: transparent;
+    border: 2px solid var(--neon-cyan);
+    border-radius: 4px;
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--neon-cyan);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    text-transform: uppercase;
+  }
+  .btn-play::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--neon-cyan);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .btn-play:hover::before { transform: translateX(0); }
+  .btn-play:hover { color: var(--dark-bg); box-shadow: 0 0 30px rgba(0,245,255,0.4); }
+  .btn-play span { position: relative; z-index: 1; }
+
+  /* ── CANVAS DO JOGO ── */
+  #gameCanvas {
+    position: fixed; inset: 0;
+    display: none;
+  }
+
+  /* ── HUD ── */
+  #hud {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    display: none;
+    z-index: 10;
+  }
+
+  /* Score top-left */
+  .hud-score {
+    position: absolute;
+    top: 20px; left: 20px;
+    pointer-events: none;
+  }
+  .hud-score .player-name-display {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.4);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .hud-score .score-val {
+    font-family: 'Orbitron', monospace;
+    font-size: 28px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 20px var(--neon-cyan);
+  }
+  .hud-score .mass-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(0,245,255,0.5);
+    margin-top: 2px;
+  }
+
+  /* Minimap */
+  #minimap {
+    position: absolute;
+    bottom: 20px; right: 20px;
+    width: 140px; height: 140px;
+    border: 1px solid rgba(0,245,255,0.2);
+    border-radius: 4px;
+    background: rgba(0,10,20,0.7);
+    overflow: hidden;
+  }
+  #minimap canvas { width:100%; height:100%; }
+  .minimap-label {
+    position: absolute;
+    top: -18px; left: 0;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(0,245,255,0.4);
+    pointer-events: none;
+  }
+
+  /* Leaderboard */
+  #leaderboard {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 180px;
+    background: var(--dark-panel);
+    border: 1px solid rgba(0,245,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .lb-header {
+    padding: 8px 12px;
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(0,245,255,0.5);
+    border-bottom: 1px solid rgba(0,245,255,0.1);
+    text-transform: uppercase;
+  }
+  .lb-entry {
+    display: flex; align-items: center;
+    padding: 5px 12px; gap: 8px;
+    font-size: 13px;
+    transition: background 0.3s;
+  }
+  .lb-entry:hover { background: rgba(0,245,255,0.05); }
+  .lb-rank {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    width: 16px;
+    text-align: right;
+  }
+  .lb-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .lb-name { flex: 1; font-weight: 600; font-size: 12px; }
+  .lb-mass {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+  }
+  .lb-entry.is-player .lb-name { color: var(--neon-cyan); }
+  .lb-entry.is-player .lb-mass { color: var(--neon-cyan); }
+
+  /* Chat */
+  #chatBox {
+    position: absolute;
+    bottom: 174px; right: 20px;
+    width: 300px;
+    pointer-events: all;
+  }
+  .chat-messages {
+    max-height: 160px;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 4px;
+    margin-bottom: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,245,255,0.2) transparent;
+  }
+  .chat-msg {
+    background: rgba(0,10,20,0.75);
+    border-left: 2px solid rgba(0,245,255,0.3);
+    padding: 5px 10px;
+    border-radius: 0 4px 4px 0;
+    font-size: 12px;
+    animation: msgIn 0.3s ease;
+    backdrop-filter: blur(4px);
+  }
+  .chat-msg.ai { border-left-color: var(--neon-pink); }
+  .chat-msg.system {
+    border-left-color: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.4);
+    font-style: italic;
+  }
+  @keyframes msgIn {
+    from { opacity:0; transform: translateX(10px); }
+    to   { opacity:1; transform: translateX(0); }
+  }
+  .chat-name { font-weight: 700; margin-right: 6px; }
+  .chat-input-row {
+    display: flex; gap: 6px;
+  }
+  #chatInput {
+    flex: 1;
+    background: rgba(0,10,30,0.8);
+    border: 1px solid rgba(0,245,255,0.2);
+    border-radius: 4px;
+    padding: 7px 10px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px;
+    color: #fff;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  #chatInput:focus { border-color: rgba(0,245,255,0.5); }
+  .btn-send {
+    padding: 7px 14px;
+    background: rgba(0,245,255,0.1);
+    border: 1px solid rgba(0,245,255,0.3);
+    border-radius: 4px;
+    color: var(--neon-cyan);
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    pointer-events: all;
+  }
+  .btn-send:hover { background: rgba(0,245,255,0.2); }
+
+  /* XP bar */
+  .xp-bar-wrap {
+    position: absolute;
+    bottom: 20px; left: 20px;
+    width: 200px;
+  }
+  .xp-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .xp-bar {
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 6px var(--neon-cyan);
+  }
+
+  /* Kill feed */
+  #killfeed {
+    position: absolute;
+    top: 20px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    pointer-events: none;
+  }
+  .kf-entry {
+    background: rgba(0,10,20,0.8);
+    border: 1px solid rgba(255,0,110,0.2);
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    animation: kfIn 0.3s ease, kfOut 0.5s ease 2.5s forwards;
+    white-space: nowrap;
+  }
+  @keyframes kfIn { from { opacity:0; transform: scale(0.8); } to { opacity:1; transform:scale(1); } }
+  @keyframes kfOut { to { opacity:0; transform: scale(0.9); } }
+
+  /* Morte/respawn */
+  #deathScreen {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 20px;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+  }
+  .death-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--neon-pink);
+    text-shadow: 0 0 40px rgba(255,0,110,0.6);
+    animation: deathPulse 1s ease-in-out infinite;
+  }
+  @keyframes deathPulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  .death-sub { color: rgba(255,255,255,0.5); font-size: 14px; letter-spacing: 3px; }
+  .btn-respawn {
+    padding: 14px 48px;
+    background: transparent;
+    border: 2px solid var(--neon-pink);
+    border-radius: 4px;
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--neon-pink);
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+  }
+  .btn-respawn:hover {
+    background: var(--neon-pink);
+    color: #000;
+    box-shadow: 0 0 30px rgba(255,0,110,0.5);
+  }
+
+  /* Abilities bar */
+  .abilities-bar {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex; gap: 8px;
+  }
+  .ability {
+    width: 48px; height: 48px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    background: rgba(0,10,20,0.7);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-size: 18px;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+  .ability-key {
+    position: absolute;
+    bottom: 3px; right: 4px;
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    color: rgba(255,255,255,0.3);
+  }
+  .ability-cd {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.8);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .ability.on-cd .ability-cd { opacity:1; }
+</style>
+</head>
+<body>
+
+<!-- ══ TELA DE ENTRADA ══ -->
+<div id="intro">
+  <canvas id="introCanvas"></canvas>
+  <div class="intro-content">
+    <div class="logo">NEBULA<br>ARENA</div>
+    <div class="subtitle">Battle · Grow · Dominate</div>
+    <div class="name-input-wrap">
+      <label>Seu nome de piloto</label>
+      <input id="playerName" type="text" maxlength="16" placeholder="GHOST" autocomplete="off" spellcheck="false">
+    </div>
+    <button class="btn-play" onclick="startGame()"><span>▶ ENTRAR NA ARENA</span></button>
+  </div>
+</div>
+
+<!-- ══ JOGO ══ -->
+<canvas id="gameCanvas"></canvas>
+
+<!-- ══ HUD ══ -->
+<div id="hud">
+
+  <div class="hud-score">
+    <div class="player-name-display" id="hudName">GHOST</div>
+    <div class="score-val" id="hudScore">0</div>
+    <div class="mass-label">MASSA</div>
+  </div>
+
+  <div id="leaderboard">
+    <div class="lb-header">▲ Ranking</div>
+    <div id="lbEntries"></div>
+  </div>
+
+  <div id="killfeed"></div>
+
+  <!-- Chat -->
+  <div id="chatBox">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-row">
+      <input id="chatInput" type="text" placeholder="Mensagem..." maxlength="80" autocomplete="off">
+      <button class="btn-send" id="sendBtn">ENV</button>
+    </div>
+  </div>
+
+  <!-- Minimap -->
+  <div id="minimap">
+    <span class="minimap-label">RADAR</span>
+    <canvas id="minimapCanvas" width="140" height="140"></canvas>
+  </div>
+
+  <!-- XP bar -->
+  <div class="xp-bar-wrap">
+    <div class="xp-label">Nível <span id="levelNum">1</span></div>
+    <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+  </div>
+
+  <!-- Abilities -->
+  <div class="abilities-bar">
+    <div class="ability" id="abilityQ">💥<div class="ability-key">Q</div><div class="ability-cd" id="cdQ"></div></div>
+    <div class="ability" id="abilityE">🛡️<div class="ability-key">E</div><div class="ability-cd" id="cdE"></div></div>
+    <div class="ability" id="abilityR">⚡<div class="ability-key">R</div><div class="ability-cd" id="cdR"></div></div>
+  </div>
+
+</div>
+
+<!-- ══ MORTE ══ -->
+<div id="deathScreen">
+  <div class="death-title">DESTRUÍDO</div>
+  <div class="death-sub" id="deathMsg">Você foi eliminado</div>
+  <button class="btn-respawn" onclick="respawn()">↺ RENASCER</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//   NEBULA ARENA — ENGINE COMPLETA
+// ══════════════════════════════════════════
+
+// ── Config ──
+const WORLD = 4000;
+const FOOD_COUNT = 600;
+const BOT_COUNT = 12;
+const VIRUS_COUNT = 18;
+
+// ── Paleta por cor ──
+const PALETTES = [
+  { base:'#00f5ff', glow:'rgba(0,245,255,', name:'Ciano'   },
+  { base:'#ff006e', glow:'rgba(255,0,110,', name:'Rosa'    },
+  { base:'#8b00ff', glow:'rgba(139,0,255,', name:'Roxo'    },
+  { base:'#00ff88', glow:'rgba(0,255,136,', name:'Verde'   },
+  { base:'#ff6b00', glow:'rgba(255,107,0,', name:'Laranja' },
+  { base:'#ffdd00', glow:'rgba(255,221,0,', name:'Ouro'    },
+  { base:'#ff4466', glow:'rgba(255,68,102,', name:'Rubi'   },
+  { base:'#44ddff', glow:'rgba(68,221,255,', name:'Azul'   },
+];
+
+// ── Estado ──
+let canvas, ctx, W, H;
+let cam = { x:0, y:0, zoom:1 };
+let player = null;
+let foods  = [];
+let viruses= [];
+let bots   = [];
+let particles = [];
+let shockwaves= [];
+let floatTexts= [];
+let gameRunning = false;
+let animId;
+let keys = {};
+let mousePos = { x:0, y:0 };
+let lastTime = 0;
+
+// Abilities cooldown
+let abilities = { Q:0, E:0, R:0, shield:false, boosted:false };
+
+// AI chat
+let chatHistory = [];
+let aiThinking = false;
+
+// ─────────────────────────────
+//   INTRO CANVAS (partículas)
+// ─────────────────────────────
+(function initIntro(){
+  const ic = document.getElementById('introCanvas');
+  const iCtx = ic.getContext('2d');
+  ic.width = window.innerWidth;
+  ic.height = window.innerHeight;
+
+  const stars = Array.from({length:200}, () => ({
+    x: Math.random()*ic.width,
+    y: Math.random()*ic.height,
+    r: Math.random()*1.5+0.2,
+    vx:(Math.random()-0.5)*0.3,
+    vy:(Math.random()-0.5)*0.3,
+    a: Math.random(),
+    phase: Math.random()*Math.PI*2,
+  }));
+
+  const orbs = Array.from({length:5}, () => ({
+    x: Math.random()*ic.width, y:Math.random()*ic.height,
+    r: 80+Math.random()*120,
+    hue: Math.random()*360,
+    vx:(Math.random()-0.5)*0.5,
+    vy:(Math.random()-0.5)*0.5,
+  }));
+
+  function drawIntro(t){
+    iCtx.fillStyle = 'rgba(2,4,8,0.18)';
+    iCtx.fillRect(0,0,ic.width,ic.height);
+
+    orbs.forEach(o=>{
+      o.x+=o.vx; o.y+=o.vy;
+      if(o.x<-o.r) o.x=ic.width+o.r;
+      if(o.x>ic.width+o.r) o.x=-o.r;
+      if(o.y<-o.r) o.y=ic.height+o.r;
+      if(o.y>ic.height+o.r) o.y=-o.r;
+      const g = iCtx.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r);
+      g.addColorStop(0,`hsla(${o.hue},100%,60%,0.06)`);
+      g.addColorStop(1,'transparent');
+      iCtx.fillStyle = g;
+      iCtx.beginPath(); iCtx.arc(o.x,o.y,o.r,0,Math.PI*2); iCtx.fill();
+      o.hue += 0.3;
+    });
+
+    stars.forEach(s=>{
+      s.x+=s.vx; s.y+=s.vy;
+      if(s.x<0) s.x=ic.width; if(s.x>ic.width) s.x=0;
+      if(s.y<0) s.y=ic.height; if(s.y>ic.height) s.y=0;
+      const a = 0.3+0.7*Math.abs(Math.sin(t/1000+s.phase));
+      iCtx.fillStyle = `rgba(255,255,255,${a*0.8})`;
+      iCtx.beginPath(); iCtx.arc(s.x,s.y,s.r,0,Math.PI*2); iCtx.fill();
+    });
+
+    if(gameRunning) return;
+    requestAnimationFrame(drawIntro);
+  }
+  requestAnimationFrame(drawIntro);
+  window.addEventListener('resize',()=>{ ic.width=innerWidth; ic.height=innerHeight; });
+})();
+
+// ─────────────────────────────
+//   INICIAR JOGO
+// ─────────────────────────────
+function startGame(){
+  const nameInput = document.getElementById('playerName');
+  const name = nameInput.value.trim() || 'GHOST';
+
+  document.getElementById('intro').style.opacity = '0';
+  setTimeout(()=>{ document.getElementById('intro').style.display='none'; },800);
+
+  canvas = document.getElementById('gameCanvas');
+  ctx    = canvas.getContext('2d');
+  canvas.style.display = 'block';
+  document.getElementById('hud').style.display = 'block';
+  document.getElementById('hudName').textContent = name;
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Input
+  window.addEventListener('mousemove', e=>{ mousePos.x=e.clientX; mousePos.y=e.clientY; });
+  window.addEventListener('keydown',   e=>{ keys[e.key.toUpperCase()]=true; onKey(e); });
+  window.addEventListener('keyup',     e=>{ keys[e.key.toUpperCase()]=false; });
+  window.addEventListener('wheel',     e=>{ cam.zoom = Math.max(0.3, Math.min(2, cam.zoom - e.deltaY*0.001)); }, {passive:true});
+
+  // Chat
+  document.getElementById('sendBtn').addEventListener('click', sendChat);
+  document.getElementById('chatInput').addEventListener('keydown', e=>{ if(e.key==='Enter') sendChat(); e.stopPropagation(); });
+
+  // Init world
+  spawnPlayer(name);
+  spawnFood();
+  spawnViruses();
+  spawnBots();
+
+  addChatMsg('Sistema', 'Bem-vindo à Nebula Arena! Use Q, E, R para habilidades.', 'system');
+  setTimeout(()=> aiReact("O jogador entrou na arena. Cumprimente-o de forma épica e curta."), 1500);
+
+  gameRunning = true;
+  lastTime = performance.now();
+  loop(lastTime);
+}
+
+function resize(){
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+
+// ─────────────────────────────
+//   SPAWN
+// ─────────────────────────────
+function randomPalette(){ return PALETTES[Math.floor(Math.random()*PALETTES.length)]; }
+
+function spawnPlayer(name){
+  const pal = PALETTES[0];
+  player = {
+    x: WORLD/2, y: WORLD/2,
+    r: 28, mass: 100,
+    name, pal,
+    xp:0, level:1,
+    alive: true,
+    trail: [],
+    angle: 0,
+    pulseT: 0,
+  };
+}
+
+function spawnFood(){
+  foods = [];
+  for(let i=0;i<FOOD_COUNT;i++) foods.push(createFood());
+}
+
+function createFood(){
+  const pal = randomPalette();
+  const pulse = Math.random()*Math.PI*2;
+  return {
+    x: Math.random()*WORLD, y: Math.random()*WORLD,
+    r: 4+Math.random()*5,
+    pal,
+    pulse,
+    sparkle: Math.random() > 0.7,
+    // orb especial
+    special: Math.random() > 0.95,
+  };
+}
+
+function spawnViruses(){
+  viruses = [];
+  for(let i=0;i<VIRUS_COUNT;i++){
+    viruses.push({
+      x: Math.random()*WORLD, y: Math.random()*WORLD,
+      r: 32+Math.random()*16,
+      angle: Math.random()*Math.PI*2,
+      spinSpeed: (Math.random()-0.5)*0.01,
+      pulseT: Math.random()*Math.PI*2,
+    });
+  }
+}
+
+const BOT_NAMES = ['Xander','Nova','Kira','Vex','Zara','Orion','Lyra','Dusk','Argo','Nyx','Blaze','Celeste'];
+
+function spawnBots(){
+  bots = [];
+  for(let i=0;i<BOT_COUNT;i++){
+    const pal = PALETTES[1+i%( PALETTES.length-1)];
+    bots.push({
+      x: Math.random()*WORLD, y:Math.random()*WORLD,
+      r: 18+Math.random()*25,
+      mass: 80+Math.random()*200,
+      name: BOT_NAMES[i]||('Bot'+(i+1)),
+      pal,
+      vx:0, vy:0,
+      targetX: Math.random()*WORLD,
+      targetY: Math.random()*WORLD,
+      alive: true,
+      changeT: 0,
+      trail: [],
+      pulseT: Math.random()*Math.PI*2,
+      aggro: false,
+    });
+  }
+}
+
+// ─────────────────────────────
+//   LOOP PRINCIPAL
+// ─────────────────────────────
+function loop(now){
+  animId = requestAnimationFrame(loop);
+  const dt = Math.min((now - lastTime)/1000, 0.1);
+  lastTime = now;
+
+  update(dt);
+  render(now);
+}
+
+// ─────────────────────────────
+//   UPDATE
+// ─────────────────────────────
+function update(dt){
+  if(!player.alive) return;
+
+  // Movimento do jogador (segue o mouse)
+  const screenCenterX = W/2, screenCenterY = H/2;
+  const dx = mousePos.x - screenCenterX;
+  const dy = mousePos.y - screenCenterY;
+  const dist = Math.sqrt(dx*dx+dy*dy);
+  const speed = abilities.boosted ? (220 / Math.sqrt(player.r)) : (160 / Math.sqrt(player.r));
+
+  if(dist > 4){
+    player.angle = Math.atan2(dy, dx);
+    const nx = dx/dist, ny=dy/dist;
+    player.x += nx * speed * dt;
+    player.y += ny * speed * dt;
+  }
+
+  player.x = Math.max(player.r, Math.min(WORLD-player.r, player.x));
+  player.y = Math.max(player.r, Math.min(WORLD-player.r, player.y));
+
+  // Trail
+  player.trail.unshift({x:player.x, y:player.y, t:1});
+  if(player.trail.length > 30) player.trail.pop();
+  player.trail.forEach(p=>{ p.t-=dt*2; });
+
+  // Camera suave
+  cam.x += (player.x - cam.x) * 5 * dt;
+  cam.y += (player.y - cam.y) * 5 * dt;
+  const targetZoom = Math.max(0.35, Math.min(1.4, 800/player.r));
+  cam.zoom += (targetZoom - cam.zoom)*3*dt;
+
+  player.pulseT += dt*2;
+
+  // Cooldowns
+  ['Q','E','R'].forEach(k=>{
+    if(abilities[k]>0) abilities[k] = Math.max(0, abilities[k]-dt);
+  });
+
+  // Boost expira
+  if(abilities.boosted) {
+    abilities.boostT = (abilities.boostT||0) + dt;
+    if(abilities.boostT>3){ abilities.boosted=false; abilities.boostT=0; }
+  }
+
+  // Comer comida
+  for(let i=foods.length-1;i>=0;i--){
+    const f = foods[i];
+    const d = Math.hypot(player.x-f.x, player.y-f.y);
+    if(d < player.r + f.r - 4){
+      const gain = f.special ? 30 : (5 + f.r);
+      grow(player, gain, f.pal);
+      spawnFoodParticles(f.x, f.y, f.pal, f.special ? 12 : 5);
+      if(f.special) spawnShockwave(f.x, f.y, f.pal.base, 60);
+      foods.splice(i,1);
+      foods.push(createFood());
+    }
+  }
+
+  // Colisão com vírus
+  for(const v of viruses){
+    const d = Math.hypot(player.x-v.x, player.y-v.y);
+    if(d < player.r + v.r - 8 && player.r > v.r * 1.1 && !abilities.shield){
+      // Divide o jogador (simplificado: perde massa)
+      const lost = player.mass * 0.3;
+      player.mass -= lost;
+      player.r = Math.sqrt(player.mass) * 2;
+      spawnFoodParticles(player.x, player.y, player.pal, 20);
+      spawnShockwave(player.x, player.y, '#ff6b00', player.r*1.5);
+      addChatMsg('Sistema','Vírus! Você perdeu massa!','system');
+    }
+    v.angle += v.spinSpeed;
+    v.pulseT += dt;
+  }
+
+  // Bots update
+  bots.forEach(b=>{
+    if(!b.alive) return;
+    b.pulseT += dt*1.5;
+    b.trail.unshift({x:b.x,y:b.y,t:1});
+    if(b.trail.length>20) b.trail.pop();
+    b.trail.forEach(p=>p.t-=dt*2);
+
+    // IA de movimento
+    b.changeT -= dt;
+    if(b.changeT<=0){
+      b.changeT = 1.5+Math.random()*3;
+      // Agressivo se maior que o player
+      if(b.r > player.r*1.2 && Math.hypot(b.x-player.x,b.y-player.y)<400){
+        b.targetX = player.x + (Math.random()-0.5)*50;
+        b.targetY = player.y + (Math.random()-0.5)*50;
+        b.aggro = true;
+      } else {
+        b.aggro = false;
+        // Vai para comida
+        let best=null, bestD=Infinity;
+        foods.slice(0,20).forEach(f=>{
+          const d=Math.hypot(b.x-f.x,b.y-f.y);
+          if(d<bestD){ bestD=d; best=f; }
+        });
+        if(best){ b.targetX=best.x; b.targetY=best.y; }
+        else { b.targetX=Math.random()*WORLD; b.targetY=Math.random()*WORLD; }
+      }
+    }
+
+    const bdx = b.targetX-b.x, bdy=b.targetY-b.y;
+    const bd = Math.hypot(bdx,bdy)||1;
+    const spd = 140/Math.sqrt(b.r);
+    b.x += (bdx/bd)*spd*dt;
+    b.y += (bdy/bd)*spd*dt;
+    b.x = Math.max(b.r, Math.min(WORLD-b.r, b.x));
+    b.y = Math.max(b.r, Math.min(WORLD-b.r, b.y));
+
+    // Bot come comida
+    for(let i=foods.length-1;i>=0;i--){
+      const f=foods[i];
+      if(Math.hypot(b.x-f.x,b.y-f.y) < b.r+f.r-4){
+        grow(b, 5+f.r, f.pal);
+        spawnFoodParticles(f.x,f.y,f.pal,3);
+        foods.splice(i,1); foods.push(createFood()); break;
+      }
+    }
+
+    // Bot come player
+    if(b.r > player.r*1.15 && !abilities.shield){
+      const d = Math.hypot(b.x-player.x, b.y-player.y);
+      if(d < b.r + player.r - player.r*0.5){
+        // Player morreu
+        killPlayer(b.name);
+        return;
+      }
+    }
+
+    // Player come bot
+    if(player.r > b.r*1.15){
+      const d = Math.hypot(player.x-b.x, player.y-b.y);
+      if(d < player.r + b.r - b.r*0.5){
+        grow(player, b.mass*0.5, b.pal);
+        spawnFoodParticles(b.x,b.y,b.pal,25);
+        spawnShockwave(b.x,b.y,b.pal.base, b.r*2);
+        addKillfeed(player.name, b.name);
+        b.alive=false;
+        setTimeout(()=>{
+          b.alive=true;
+          b.x=Math.random()*WORLD; b.y=Math.random()*WORLD;
+          b.mass=80+Math.random()*100;
+          b.r=Math.sqrt(b.mass)*2;
+          b.trail=[];
+        },3000);
+        // Reação AI
+        if(Math.random()>0.5){
+          aiReact(`O jogador ${player.name} eliminou ${b.name}. Reaja com algo épico e curto (máx 1 frase) no papel do bot derrotado.`);
+        }
+      }
+    }
+  });
+
+  // Partículas
+  particles.forEach(p=>{ p.x+=p.vx*dt; p.y+=p.vy*dt; p.life-=dt; p.vy+=p.gravity*dt; });
+  particles = particles.filter(p=>p.life>0);
+
+  // Shockwaves
+  shockwaves.forEach(s=>{ s.r+=s.speed*dt; s.life-=dt; });
+  shockwaves = shockwaves.filter(s=>s.life>0);
+
+  // Float texts
+  floatTexts.forEach(f=>{ f.y-=40*dt; f.life-=dt; });
+  floatTexts = floatTexts.filter(f=>f.life>0);
+
+  // Leaderboard
+  updateLeaderboard();
+
+  // XP bar
+  const xpForNext = player.level * 500;
+  document.getElementById('xpFill').style.width = Math.min(100,(player.xp/xpForNext)*100)+'%';
+  document.getElementById('levelNum').textContent = player.level;
+  document.getElementById('hudScore').textContent = Math.floor(player.mass);
+
+  // Minimap
+  drawMinimap();
+}
+
+function grow(entity, amount, pal){
+  entity.mass += amount;
+  entity.r = Math.sqrt(entity.mass)*2;
+  if(entity === player){
+    player.xp += amount;
+    if(player.xp >= player.level*500){ player.level++; levelUp(); }
+  }
+}
+
+function levelUp(){
+  spawnShockwave(player.x, player.y, player.pal.base, player.r*3);
+  floatTexts.push({x:player.x,y:player.y-player.r-10,text:'NÍVEL UP!',color:'#ffdd00',life:2,size:18});
+  addChatMsg('Sistema',`⚡ Nível ${player.level} atingido!`,'system');
+}
+
+function killPlayer(killerName){
+  player.alive = false;
+  spawnFoodParticles(player.x, player.y, player.pal, 40);
+  spawnShockwave(player.x, player.y, player.pal.base, player.r*3);
+  document.getElementById('deathMsg').textContent = `Eliminado por ${killerName}`;
+  document.getElementById('deathScreen').style.display='flex';
+  aiReact(`O jogador foi eliminado por ${killerName}. Diga algo épico e curto para motivá-lo a voltar.`);
+}
+
+function respawn(){
+  document.getElementById('deathScreen').style.display='none';
+  player.x = Math.random()*WORLD; player.y = Math.random()*WORLD;
+  player.mass = 100; player.r = 28;
+  player.alive = true; player.trail = [];
+  player.xp = 0; player.level = 1;
+  addChatMsg('Sistema','Você renasceu!','system');
+}
+
+function onKey(e){
+  const k = e.key.toUpperCase();
+  if(k==='Q') useAbility('Q');
+  if(k==='E') useAbility('E');
+  if(k==='R') useAbility('R');
+}
+
+function useAbility(k){
+  if(!player.alive || abilities[k]>0) return;
+  if(k==='Q'){
+    // Explosão
+    abilities.Q = 8;
+    spawnShockwave(player.x, player.y, '#ff006e', player.r*4);
+    spawnFoodParticles(player.x,player.y,{base:'#ff006e',glow:'rgba(255,0,110,'},30);
+    // Empurra bots
+    bots.forEach(b=>{
+      const d=Math.hypot(b.x-player.x,b.y-player.y);
+      if(d<200){
+        const a=Math.atan2(b.y-player.y,b.x-player.x);
+        b.x+=Math.cos(a)*120; b.y+=Math.sin(a)*120;
+      }
+    });
+    document.getElementById('abilityQ').classList.add('on-cd');
+    startCdTimer('Q',8,'cdQ');
+    floatTexts.push({x:player.x,y:player.y-player.r-20,text:'BLAST!',color:'#ff006e',life:1.5,size:16});
+  }
+  if(k==='E'){
+    // Escudo
+    abilities.E = 12;
+    abilities.shield = true;
+    setTimeout(()=>{ abilities.shield=false; },3000);
+    document.getElementById('abilityE').classList.add('on-cd');
+    startCdTimer('E',12,'cdE');
+    floatTexts.push({x:player.x,y:player.y-player.r-20,text:'SHIELD!',color:'#00f5ff',life:1.5,size:16});
+    spawnShockwave(player.x,player.y,'#00f5ff',player.r*2);
+  }
+  if(k==='R'){
+    // Boost
+    abilities.R = 10;
+    abilities.boosted = true;
+    abilities.boostT = 0;
+    document.getElementById('abilityR').classList.add('on-cd');
+    startCdTimer('R',10,'cdR');
+    floatTexts.push({x:player.x,y:player.y-player.r-20,text:'BOOST!',color:'#00ff88',life:1.5,size:16});
+  }
+}
+
+function startCdTimer(key, total, cdId){
+  const cdEl = document.getElementById(cdId);
+  const start = performance.now();
+  function tick(){
+    const elapsed = (performance.now()-start)/1000;
+    const rem = total-elapsed;
+    if(rem<=0){
+      document.getElementById('ability'+key).classList.remove('on-cd');
+      cdEl.textContent='';
+      return;
+    }
+    cdEl.textContent = rem.toFixed(1);
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// ─────────────────────────────
+//   PARTÍCULAS & EFEITOS
+// ─────────────────────────────
+function spawnFoodParticles(x,y,pal,count){
+  for(let i=0;i<count;i++){
+    const a=Math.random()*Math.PI*2, spd=50+Math.random()*200;
+    particles.push({
+      x,y,
+      vx:Math.cos(a)*spd, vy:Math.sin(a)*spd,
+      r: 2+Math.random()*4,
+      color: pal.base,
+      glow: pal.glow,
+      life: 0.4+Math.random()*0.6,
+      maxLife: 0.4+Math.random()*0.6,
+      gravity: 50+Math.random()*100,
+    });
+  }
+}
+
+function spawnShockwave(x,y,color,maxR){
+  shockwaves.push({ x,y,r:5, maxR, color, life:0.6, maxLife:0.6, speed:maxR/0.6 });
+}
+
+// ─────────────────────────────
+//   LEADERBOARD
+// ─────────────────────────────
+function updateLeaderboard(){
+  const all = [
+    {name:player.name, mass:player.mass, pal:player.pal, isPlayer:true},
+    ...bots.filter(b=>b.alive).map(b=>({name:b.name, mass:b.mass, pal:b.pal, isPlayer:false}))
+  ].sort((a,b)=>b.mass-a.mass).slice(0,8);
+
+  const container = document.getElementById('lbEntries');
+  container.innerHTML = all.map((e,i)=>`
+    <div class="lb-entry ${e.isPlayer?'is-player':''}">
+      <span class="lb-rank">${i+1}</span>
+      <span class="lb-dot" style="background:${e.pal.base};box-shadow:0 0 6px ${e.pal.base}"></span>
+      <span class="lb-name">${e.name}</span>
+      <span class="lb-mass">${Math.floor(e.mass)}</span>
+    </div>
+  `).join('');
+}
+
+function addKillfeed(killer, victim){
+  const kf = document.getElementById('killfeed');
+  const el = document.createElement('div');
+  el.className='kf-entry';
+  el.innerHTML=`<span style="color:#00f5ff">${killer}</span> <span style="opacity:0.4">eliminou</span> <span style="color:#ff006e">${victim}</span>`;
+  kf.appendChild(el);
+  setTimeout(()=>el.remove(),3000);
+}
+
+// ─────────────────────────────
+//   MINIMAP
+// ─────────────────────────────
+function drawMinimap(){
+  const mc=document.getElementById('minimapCanvas');
+  const mx=mc.getContext('2d');
+  const mw=mc.width, mh=mc.height;
+  const scale=mw/WORLD;
+
+  mx.clearRect(0,0,mw,mh);
+  mx.fillStyle='rgba(0,10,20,0.5)';
+  mx.fillRect(0,0,mw,mh);
+
+  // Grid
+  mx.strokeStyle='rgba(0,245,255,0.05)';
+  mx.lineWidth=0.5;
+  for(let i=0;i<=4;i++){
+    mx.beginPath(); mx.moveTo(i*mw/4,0); mx.lineTo(i*mw/4,mh); mx.stroke();
+    mx.beginPath(); mx.moveTo(0,i*mh/4); mx.lineTo(mw,i*mh/4); mx.stroke();
+  }
+
+  // Comida (dots)
+  foods.slice(0,100).forEach(f=>{
+    mx.fillStyle = f.pal.base+'88';
+    mx.fillRect(f.x*scale-0.5, f.y*scale-0.5, 1, 1);
+  });
+
+  // Bots
+  bots.filter(b=>b.alive).forEach(b=>{
+    mx.fillStyle = b.pal.base;
+    mx.beginPath(); mx.arc(b.x*scale, b.y*scale, Math.max(2, b.r*scale*0.5), 0, Math.PI*2); mx.fill();
+  });
+
+  // Player
+  if(player.alive){
+    mx.fillStyle='#ffffff';
+    mx.shadowColor=player.pal.base; mx.shadowBlur=8;
+    mx.beginPath(); mx.arc(player.x*scale, player.y*scale, Math.max(3,player.r*scale*0.6),0,Math.PI*2);
+    mx.fill();
+    mx.shadowBlur=0;
+    // Campo de visão
+    const vw=(W/cam.zoom)*scale/2, vh=(H/cam.zoom)*scale/2;
+    mx.strokeStyle='rgba(255,255,255,0.15)';
+    mx.strokeRect(player.x*scale-vw, player.y*scale-vh, vw*2, vh*2);
+  }
+}
+
+// ─────────────────────────────
+//   RENDER
+// ─────────────────────────────
+function render(t){
+  ctx.clearRect(0,0,W,H);
+
+  // Fundo espacial
+  drawBackground(t);
+
+  ctx.save();
+  ctx.translate(W/2 - cam.x*cam.zoom, H/2 - cam.y*cam.zoom);
+  ctx.scale(cam.zoom, cam.zoom);
+
+  // Grid do mundo
+  drawGrid();
+
+  // Comida
+  drawFoods(t);
+
+  // Vírus
+  drawViruses(t);
+
+  // Trails
+  drawTrails();
+
+  // Bots
+  bots.filter(b=>b.alive).forEach(b=> drawCell(b, t, false));
+
+  // Player
+  if(player.alive) drawCell(player, t, true);
+
+  // Shockwaves
+  drawShockwaves();
+
+  // Partículas
+  drawParticles();
+
+  // Float texts
+  drawFloatTexts();
+
+  ctx.restore();
+
+  // Vignette
+  drawVignette();
+}
+
+function drawBackground(t){
+  // Deep space
+  const g = ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H));
+  g.addColorStop(0,'#030a18');
+  g.addColorStop(1,'#010206');
+  ctx.fillStyle=g;
+  ctx.fillRect(0,0,W,H);
+
+  // Nebula glow ao redor do player
+  const px = W/2, py=H/2;
+  const ng = ctx.createRadialGradient(px,py,0,px,py,400);
+  ng.addColorStop(0,player.pal.glow+'0.025)');
+  ng.addColorStop(1,'transparent');
+  ctx.fillStyle=ng;
+  ctx.fillRect(0,0,W,H);
+}
+
+function drawGrid(){
+  const gridSize = 100;
+  ctx.strokeStyle='rgba(0,245,255,0.04)';
+  ctx.lineWidth = 1/cam.zoom;
+
+  const startX = Math.floor(0/gridSize)*gridSize;
+  const startY = Math.floor(0/gridSize)*gridSize;
+  for(let x=startX; x<=WORLD; x+=gridSize){
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,WORLD); ctx.stroke();
+  }
+  for(let y=startY; y<=WORLD; y+=gridSize){
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(WORLD,y); ctx.stroke();
+  }
+  // Borda do mundo
+  ctx.strokeStyle='rgba(0,245,255,0.15)';
+  ctx.lineWidth=3/cam.zoom;
+  ctx.strokeRect(0,0,WORLD,WORLD);
+}
+
+function drawFoods(t){
+  const ts = t/1000;
+  foods.forEach(f=>{
+    const pulse = 0.85 + 0.15*Math.sin(ts*2+f.pulse);
+    const r = f.r * pulse;
+
+    if(f.special){
+      // Orb especial com anel
+      ctx.save();
+      ctx.shadowColor = f.pal.base;
+      ctx.shadowBlur = 20;
+      const sg = ctx.createRadialGradient(f.x,f.y,0,f.x,f.y,r*2);
+      sg.addColorStop(0,f.pal.glow+'0.6)');
+      sg.addColorStop(0.5,f.pal.glow+'0.3)');
+      sg.addColorStop(1,'transparent');
+      ctx.fillStyle=sg;
+      ctx.beginPath(); ctx.arc(f.x,f.y,r*2,0,Math.PI*2); ctx.fill();
+
+      // Anel rotativo
+      ctx.strokeStyle=f.pal.glow+'0.5)';
+      ctx.lineWidth=2;
+      ctx.setLineDash([4,6]);
+      ctx.lineDashOffset=-ts*30;
+      ctx.beginPath(); ctx.arc(f.x,f.y,r*1.5,0,Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    // Corpo
+    ctx.save();
+    ctx.shadowColor = f.pal.base;
+    ctx.shadowBlur = 8+4*pulse;
+    const fg = ctx.createRadialGradient(f.x-r*0.3,f.y-r*0.3,0,f.x,f.y,r);
+    fg.addColorStop(0,'#ffffff');
+    fg.addColorStop(0.4, f.pal.base);
+    fg.addColorStop(1, f.pal.glow+'0.2)');
+    ctx.fillStyle=fg;
+    ctx.beginPath(); ctx.arc(f.x,f.y,r,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  });
+}
+
+function drawViruses(t){
+  const ts=t/1000;
+  viruses.forEach(v=>{
+    const pulse=0.95+0.05*Math.sin(ts*1.5+v.pulseT);
+    const spikes=12;
+
+    ctx.save();
+    ctx.translate(v.x,v.y);
+    ctx.rotate(v.angle);
+
+    // Glow
+    ctx.shadowColor='#00ff88';
+    ctx.shadowBlur=20;
+
+    // Corpo estrelado
+    ctx.fillStyle='rgba(0,40,20,0.6)';
+    ctx.strokeStyle='#00ff88';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    for(let i=0;i<spikes*2;i++){
+      const a=(i/spikes/2)*Math.PI*2 - Math.PI/2;
+      const r=i%2===0 ? v.r*pulse : v.r*0.6*pulse;
+      if(i===0) ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r);
+      else ctx.lineTo(Math.cos(a)*r, Math.sin(a)*r);
+    }
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    // Centro
+    const cg=ctx.createRadialGradient(0,0,0,0,0,v.r*0.4);
+    cg.addColorStop(0,'rgba(0,255,136,0.5)');
+    cg.addColorStop(1,'transparent');
+    ctx.fillStyle=cg;
+    ctx.beginPath(); ctx.arc(0,0,v.r*0.4,0,Math.PI*2); ctx.fill();
+
+    ctx.restore();
+  });
+}
+
+function drawTrails(){
+  [player, ...bots.filter(b=>b.alive)].forEach(e=>{
+    if(e.trail.length<2) return;
+    for(let i=1;i<e.trail.length;i++){
+      const p0=e.trail[i-1], p1=e.trail[i];
+      const life=Math.max(0,p1.t);
+      if(life<=0) continue;
+      ctx.strokeStyle=e.pal.glow+`${life*0.25})`;
+      ctx.lineWidth=(e===player?e.r:e.r)*0.3*life;
+      ctx.lineCap='round';
+      ctx.beginPath(); ctx.moveTo(p0.x,p0.y); ctx.lineTo(p1.x,p1.y); ctx.stroke();
+    }
+  });
+}
+
+function drawCell(e, t, isPlayer){
+  const ts=t/1000;
+  const pulse=1+0.03*Math.sin(ts*2+e.pulseT);
+  const r=e.r*pulse;
+  const {x,y} = e;
+
+  ctx.save();
+
+  // Sombra / aura externa
+  if(isPlayer && abilities.shield){
+    ctx.shadowColor='#00f5ff';
+    ctx.shadowBlur=30;
+    ctx.strokeStyle='rgba(0,245,255,0.5)';
+    ctx.lineWidth=4;
+    ctx.setLineDash([6,4]);
+    ctx.lineDashOffset=-ts*40;
+    ctx.beginPath(); ctx.arc(x,y,r*1.25,0,Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Glow externo
+  ctx.shadowColor=e.pal.base;
+  ctx.shadowBlur=isPlayer? 35 : 20;
+
+  // Gradiente do corpo
+  const g=ctx.createRadialGradient(x-r*0.3,y-r*0.4,0,x,y,r);
+  g.addColorStop(0,'rgba(255,255,255,0.95)');
+  g.addColorStop(0.3, e.pal.base);
+  g.addColorStop(0.7, e.pal.glow+'0.7)');
+  g.addColorStop(1,   e.pal.glow+'0.1)');
+  ctx.fillStyle=g;
+  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+
+  // Anel interno brilhante
+  ctx.strokeStyle='rgba(255,255,255,0.2)';
+  ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.arc(x,y,r*0.75,0,Math.PI*2); ctx.stroke();
+
+  // Boost trail especial
+  if(isPlayer && abilities.boosted){
+    const ba=e.angle+Math.PI;
+    for(let i=0;i<5;i++){
+      const off=(i+1)*r*0.5;
+      const bx=x+Math.cos(ba)*off, by=y+Math.sin(ba)*off;
+      const a=0.4-i*0.07;
+      ctx.globalAlpha=a;
+      ctx.fillStyle=e.pal.base;
+      ctx.beginPath(); ctx.arc(bx+Math.cos(ba+Math.PI/2)*i*2,by+Math.sin(ba+Math.PI/2)*i*2,(r*0.4)*(1-i*0.15),0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+
+  ctx.shadowBlur=0;
+
+  // Nome
+  const fontSize = Math.max(10, Math.min(r*0.45, 22));
+  ctx.font=`900 ${fontSize}px Orbitron, monospace`;
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(255,255,255,0.9)';
+  ctx.strokeStyle='rgba(0,0,0,0.5)';
+  ctx.lineWidth=3;
+  ctx.strokeText(e.name.slice(0,10),x,y);
+  ctx.fillText(e.name.slice(0,10),x,y);
+
+  // Massa
+  if(r>25){
+    const mf=Math.max(8,Math.min(r*0.25,14));
+    ctx.font=`600 ${mf}px Rajdhani, sans-serif`;
+    ctx.fillStyle='rgba(255,255,255,0.5)';
+    ctx.fillText(Math.floor(e.mass),x,y+fontSize*0.7);
+  }
+
+  // Indicador de aggro (bot)
+  if(!isPlayer && e.aggro){
+    ctx.strokeStyle='rgba(255,0,110,0.7)';
+    ctx.lineWidth=2;
+    ctx.setLineDash([3,3]);
+    ctx.lineDashOffset=ts*20;
+    ctx.beginPath(); ctx.arc(x,y,r+6,0,Math.PI*2); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  ctx.restore();
+}
+
+function drawShockwaves(){
+  shockwaves.forEach(s=>{
+    const a=s.life/s.maxLife;
+    ctx.save();
+    ctx.globalAlpha=a*0.7;
+    ctx.strokeStyle=s.color;
+    ctx.lineWidth=3*(1-a)+1;
+    ctx.shadowColor=s.color; ctx.shadowBlur=20;
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.stroke();
+    ctx.restore();
+  });
+}
+
+function drawParticles(){
+  particles.forEach(p=>{
+    const a=p.life/p.maxLife;
+    ctx.save();
+    ctx.globalAlpha=a;
+    ctx.shadowColor=p.color; ctx.shadowBlur=8;
+    ctx.fillStyle=p.color;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r*a,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  });
+}
+
+function drawFloatTexts(){
+  floatTexts.forEach(f=>{
+    const a=f.life/1.5;
+    ctx.save();
+    ctx.globalAlpha=Math.min(1,a);
+    ctx.font=`900 ${f.size}px Orbitron, monospace`;
+    ctx.textAlign='center';
+    ctx.fillStyle=f.color;
+    ctx.shadowColor=f.color; ctx.shadowBlur=15;
+    ctx.fillText(f.text,f.x,f.y);
+    ctx.restore();
+  });
+}
+
+function drawVignette(){
+  const vg=ctx.createRadialGradient(W/2,H/2,Math.min(W,H)*0.3,W/2,H/2,Math.max(W,H)*0.75);
+  vg.addColorStop(0,'transparent');
+  vg.addColorStop(1,'rgba(1,2,6,0.55)');
+  ctx.fillStyle=vg;
+  ctx.fillRect(0,0,W,H);
+}
+
+// ─────────────────────────────
+//   CHAT & AI
+// ─────────────────────────────
+function addChatMsg(name, text, type='player'){
+  const box=document.getElementById('chatMessages');
+  const el=document.createElement('div');
+  el.className=`chat-msg ${type}`;
+  if(type!=='system') el.innerHTML=`<span class="chat-name" style="color:${type==='ai'?'#ff006e':'#00f5ff'}">${name}</span>${text}`;
+  else el.textContent=text;
+  box.appendChild(el);
+  box.scrollTop=box.scrollHeight;
+  // Limite de mensagens
+  while(box.children.length>30) box.removeChild(box.firstChild);
+}
+
+function sendChat(){
+  const input=document.getElementById('chatInput');
+  const msg=input.value.trim();
+  if(!msg) return;
+  input.value='';
+
+  const pName=player.name||'GHOST';
+  addChatMsg(pName, msg, 'player');
+  chatHistory.push({role:'user',content:`${pName}: ${msg}`});
+
+  // AI responde
+  if(!aiThinking) aiRespond(msg);
+}
+
+async function aiRespond(userMsg){
+  if(aiThinking) return;
+  aiThinking=true;
+
+  const botAlive = bots.filter(b=>b.alive);
+  const responder = botAlive[Math.floor(Math.random()*botAlive.length)] || {name:'Nova',pal:PALETTES[1]};
+
+  const systemPrompt=`Você é ${responder.name}, um jogador no jogo Nebula Arena (estilo agar.io/nebulos.io).
+Responda como esse personagem: épico, curto (máximo 12 palavras), no contexto do jogo.
+Use referências ao jogo: comer células, crescer, dominar. Pode ser agressivo ou provocativo.
+Não use emojis. Responda APENAS a fala do personagem.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:80,
+        system: systemPrompt,
+        messages:[...chatHistory.slice(-6),{role:'user',content:userMsg}],
+      })
+    });
+    const data=await response.json();
+    const reply=data.content?.[0]?.text?.trim()||'...';
+    addChatMsg(responder.name, reply, 'ai');
+    chatHistory.push({role:'assistant',content:reply});
+  } catch(e){
+    addChatMsg(responder.name,'Servidor nebular instável.','ai');
+  } finally {
+    aiThinking=false;
+  }
+}
+
+async function aiReact(prompt){
+  if(aiThinking) return;
+  aiThinking=true;
+
+  const botAlive = bots.filter(b=>b.alive);
+  const responder = botAlive[Math.floor(Math.random()*botAlive.length)] || {name:'Nova'};
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:60,
+        system:'Você é um jogador de Nebula Arena. Responda de forma épica, curta (máx 10 palavras), sem emojis.',
+        messages:[{role:'user',content:prompt}],
+      })
+    });
+    const d=await res.json();
+    const reply=d.content?.[0]?.text?.trim();
+    if(reply) addChatMsg(responder.name, reply,'ai');
+  } catch(e){}
+  finally{ aiThinking=false; }
+}
+
+// Hotkey Enter para focar o chat
+window.addEventListener('keydown',e=>{
+  if(e.key==='Enter' && document.activeElement!==document.getElementById('chatInput')){
+    document.getElementById('chatInput').focus();
+  }
+});
+</script>
+</body>
+</html>
